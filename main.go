@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
-	fmt.Println("ApiKey:", config.Config.ApiKey)
-	fmt.Println("ApiSecret:", config.Config.ApiSecret)
+	fmt.Printf("%+v\n", config.Env)
+	fmt.Println(config.Env.Key)
+	fmt.Println(config.Env.Secret)
 }

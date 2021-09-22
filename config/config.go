@@ -1,28 +1,16 @@
 package config
 
 import (
-	"log"
-	"os"
-
-	"gopkg.in/ini.v1"
+	"github.com/kelseyhightower/envconfig"
 )
 
-type ConfigList struct {
-	ApiKey    string
-	ApiSecret string
+type EnvConfig struct {
+	Key    string
+	Secret string
 }
 
-var Config ConfigList
+var Env EnvConfig
 
 func init() {
-	cfg, err := ini.Load("config.ini")
-	if err != nil {
-		log.Printf("Failed to read file: %v", err)
-		os.Exit(1)
-	}
-
-	Config = ConfigList{
-		ApiKey:    cfg.Section("bitflyer").Key("api_key").String(),
-		ApiSecret: cfg.Section("bitflyer").Key("api_secret").String(),
-	}
+	envconfig.Process("api", &Env)
 }
