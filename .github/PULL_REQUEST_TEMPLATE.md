@@ -15,5 +15,4 @@
 
 ## 参考リンク
 <!-- [タイトル](URL) 書式でリンクになります。 -->
-- 以下のリンクからテンプレートを拝借
-[https://github.com/Yasuhisa/GitHubTemplate/edit/master/.github/PULL_REQUEST_TEMPLATE.md]
+- [テンプレートを拝借したリンク](https://github.com/Yasuhisa/GitHubTemplate/edit/master/.github/PULL_REQUEST_TEMPLATE.md)
