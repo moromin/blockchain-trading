@@ -1,12 +1,12 @@
 package main
 
 import (
+	"blockchain-trading/bitflyer"
 	"blockchain-trading/config"
 	"fmt"
 )
 
 func main() {
-	fmt.Printf("%+v\n", config.Env)
-	fmt.Println(config.Env.Key)
-	fmt.Println(config.Env.Secret)
+	apiClient := bitflyer.New(config.Env.Key, config.Env.Secret)
+	fmt.Println(apiClient.GetBalance())
 }
