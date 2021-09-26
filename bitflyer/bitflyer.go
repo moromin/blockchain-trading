@@ -28,7 +28,7 @@ func New(key, secret string) *APIClient {
 	return apiClient
 }
 
-func (api *APIClient) header(method, endpoint string, body []byte) map[string]string {
+func (api APIClient) header(method, endpoint string, body []byte) map[string]string {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	message := timestamp + method + endpoint + string(body)
 
@@ -53,7 +53,7 @@ func (api *APIClient) doRequest(method, urlPath string, query map[string]string,
 		return
 	}
 	endpoint := baseURL.ResolveReference(apiURL).String()
-	log.Printf("action-doRequest endpoint=%s", endpoint)
+	log.Printf("action=doRequest endpoint=%s", endpoint)
 	req, err := http.NewRequest(method, endpoint, bytes.NewBuffer(data))
 	if err != nil {
 		return
@@ -88,7 +88,7 @@ type Balance struct {
 func (api *APIClient) GetBalance() ([]Balance, error) {
 	url := "me/getbalance"
 	resp, err := api.doRequest("GET", url, map[string]string{}, nil)
-	log.Printf("url=%s, resp=%s", url, string(resp))
+	log.Printf("url=%s resp=%s", url, string(resp))
 	if err != nil {
 		log.Printf("action=GetBalance err=%s", err.Error())
 		return nil, err
@@ -101,4 +101,53 @@ func (api *APIClient) GetBalance() ([]Balance, error) {
 		return nil, err
 	}
 	return balance, nil
+}
+
+type Ticker struct {
+	ProductCode     string  `json:"product_code"`
+	State           string  `json:"state"`
+	Timestamp       string  `json:"timestamp"`
+	TickID          int     `json:"tick_id"`
+	BestBid         float64 `json:"best_bid"`
+	BestAsk         float64 `json:"best_ask"`
+	BestBidSize     float64 `json:"best_bid_size"`
+	BestAskSize     float64 `json:"best_ask_size"`
+	TotalBidDepth   float64 `json:"total_bid_depth"`
+	TotalAskDepth   float64 `json:"total_ask_depth"`
+	MarketBidSize   float64 `json:"market_bid_size"`
+	MarketAskSize   float64 `json:"market_ask_size"`
+	Ltp             float64 `json:"ltp"`
+	Volume          float64 `json:"volume"`
+	VolumeByProduct float64 `json:"volume_by_product"`
+}
+
+func (t *Ticker) GetMidPrice() float64 {
+	return (t.BestBid + t.BestAsk) / 2
+}
+
+func (t *Ticker) DateTime() time.Time {
+	dateTime, err := time.Parse(time.RFC3339, t.Timestamp)
+	if err != nil {
+		log.Printf("action=DateTime, err=%s", err.Error())
+	}
+	return dateTime
+}
+
+func (t *Ticker) TruncateDateTime(duration time.Duration) time.Time {
+	return t.DateTime().Truncate(duration)
+}
+
+func (api *APIClient) GetTicker(productCode string) (*Ticker, error) {
+	url := "ticker"
+	resp, err := api.doRequest("GET", url, map[string]string{"product_code": productCode}, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var ticker Ticker
+	err = json.Unmarshal(resp, &ticker)
+	if err != nil {
+		return nil, err
+	}
+	return &ticker, nil
 }
