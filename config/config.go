@@ -5,8 +5,9 @@ import (
 )
 
 type EnvConfig struct {
-	Key    string
-	Secret string
+	Key         string
+	Secret      string
+	ProductCode string `envconfig:"PRODUCT_CODE" default:"BTC_JPY"`
 }
 
 var Env EnvConfig
