@@ -9,9 +9,13 @@ import (
 
 func main() {
 	apiClient := bitflyer.New(config.Env.Key, config.Env.Secret)
-	ticker, _ := apiClient.GetTicker("BTC_JPY")
-	fmt.Println(ticker)
-	fmt.Println(ticker.GetMidPrice())
-	fmt.Println(ticker.DateTime())
-	fmt.Println(ticker.TruncateDateTime(time.Hour))
+
+	fmt.Println(apiClient.GetBalance())
+	tickerChannel := make(chan bitflyer.Ticker)
+	go apiClient.GetRealTimeTicker(config.Env.ProductCode, tickerChannel)
+	for ticker := range tickerChannel {
+		fmt.Println(ticker.GetMidPrice())
+		fmt.Println(ticker.DateTime())
+		fmt.Println(ticker.TruncateDateTime(time.Hour))
+	}
 }
