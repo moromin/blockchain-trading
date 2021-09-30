@@ -199,19 +199,15 @@ OUTER:
 		if message.Method == "channelMessage" {
 			switch v := message.Params.(type) {
 			case map[string]interface{}:
-				for key, binary := range v {
-					if key == "message" {
-						marshaTic, err := json.Marshal(binary)
-						if err != nil {
-							continue OUTER
-						}
-						var ticker Ticker
-						if err := json.Unmarshal(marshaTic, &ticker); err != nil {
-							continue OUTER
-						}
-						ch <- ticker
-					}
+				marshaTic, err := json.Marshal(v["message"])
+				if err != nil {
+					continue OUTER
 				}
+				var ticker Ticker
+				if err := json.Unmarshal(marshaTic, &ticker); err != nil {
+					continue OUTER
+				}
+				ch <- ticker
 			}
 		}
 	}
