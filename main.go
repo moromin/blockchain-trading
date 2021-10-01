@@ -14,4 +14,7 @@ func main() {
 
 	balance := service.NewBalanceService(apiClient)
 	fmt.Println(balance.GetBalance())
+
+	ticker := service.NewTickerService(apiClient)
+	fmt.Println(ticker.GetTicker(config.Env.ProductCode))
 }
