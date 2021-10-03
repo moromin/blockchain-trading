@@ -1,10 +1,10 @@
 package main
 
 import (
+	"blockchain-trading/api"
 	"blockchain-trading/config"
 	"blockchain-trading/model/entity"
 	"blockchain-trading/model/repository"
-	"blockchain-trading/service"
 	"fmt"
 	"time"
 )
@@ -12,16 +12,16 @@ import (
 func main() {
 	fmt.Println(config.Env)
 
-	apiClient := repository.NewAPIRepository(config.Env.Key, config.Env.Secret)
+	apiClient := api.NewAPIClient(config.Env.Key, config.Env.Secret)
 
-	balance := service.NewBalanceService(apiClient)
+	balance := repository.NewBalanceRepository(apiClient)
 	fmt.Println(balance.GetBalance())
 
-	// ticker := service.NewTickerService(apiClient)
-	// fmt.Println(ticker.GetTicker(config.Env.ProductCode))
+	ticker := repository.NewTickerRepository(apiClient)
+	fmt.Println(ticker.GetTicker(config.Env.ProductCode))
 
 	tickerChannel := make(chan entity.Ticker)
-	realTimeTicker := service.NewRealTimeTickerService(apiClient)
+	realTimeTicker := repository.NewRealTimeTickerRepository(apiClient)
 	go realTimeTicker.GetRealTimeTicker(config.Env.ProductCode, tickerChannel)
 	for ticker := range tickerChannel {
 		fmt.Println(ticker.GetMidPrice())
