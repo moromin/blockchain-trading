@@ -1,11 +1,10 @@
-package bitflyer
+package api
 
 import (
 	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,21 +13,29 @@ import (
 	"time"
 )
 
-// エンドポイント URL
-const baseURL = "https://api.bitflyer.com/v1/"
+const (
+	baseURL = "https://api.bitflyer.com/v1/"
+)
 
-type APIClient struct {
+type APIClient interface {
+	DoRequest(method, urlPath string, query map[string]string, data []byte) (body []byte, err error)
+}
+
+type apiClient struct {
 	key        string
 	secret     string
 	httpClient *http.Client
 }
 
-func New(key, secret string) *APIClient {
-	apiClient := &APIClient{key, secret, &http.Client{}}
-	return apiClient
+func NewAPIClient(key, secret string) APIClient {
+	return &apiClient{
+		key:        key,
+		secret:     secret,
+		httpClient: &http.Client{},
+	}
 }
 
-func (api *APIClient) header(method, endpoint string, body []byte) map[string]string {
+func (api apiClient) header(method, endpoint string, body []byte) map[string]string {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	message := timestamp + method + endpoint + string(body)
 
@@ -43,7 +50,7 @@ func (api *APIClient) header(method, endpoint string, body []byte) map[string]st
 	}
 }
 
-func (api *APIClient) doRequest(method, urlPath string, query map[string]string, data []byte) (body []byte, err error) {
+func (api *apiClient) DoRequest(method, urlPath string, query map[string]string, data []byte) (body []byte, err error) {
 	baseURL, err := url.Parse(baseURL)
 	if err != nil {
 		return
@@ -53,7 +60,7 @@ func (api *APIClient) doRequest(method, urlPath string, query map[string]string,
 		return
 	}
 	endpoint := baseURL.ResolveReference(apiURL).String()
-	log.Printf("action-doRequest endpoint=%s", endpoint)
+	log.Printf("action=doRequest endpoint=%s", endpoint)
 	req, err := http.NewRequest(method, endpoint, bytes.NewBuffer(data))
 	if err != nil {
 		return
@@ -77,28 +84,4 @@ func (api *APIClient) doRequest(method, urlPath string, query map[string]string,
 		return nil, err
 	}
 	return body, nil
-}
-
-type Balance struct {
-	CurrentCode string  `json:"currency_code"`
-	Amount      float64 `json:"amount"`
-	Available   float64 `json:"available"`
-}
-
-func (api *APIClient) GetBalance() ([]Balance, error) {
-	url := "me/getbalance"
-	resp, err := api.doRequest("GET", url, map[string]string{}, nil)
-	log.Printf("url=%s, resp=%s", url, string(resp))
-	if err != nil {
-		log.Printf("action=GetBalance err=%s", err.Error())
-		return nil, err
-	}
-
-	var balance []Balance
-	err = json.Unmarshal(resp, &balance)
-	if err != nil {
-		log.Printf("action=GetBalance err=%s", err.Error())
-		return nil, err
-	}
-	return balance, nil
 }
