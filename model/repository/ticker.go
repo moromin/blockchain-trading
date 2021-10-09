@@ -6,19 +6,19 @@ import (
 	"encoding/json"
 )
 
-type TickerService interface {
+type TickerRepository interface {
 	GetTicker(productCode string) (*entity.Ticker, error)
 }
 
-type tickerService struct {
+type tickerRepository struct {
 	ac api.APIClient
 }
 
-func NewTickerRepository(ac api.APIClient) TickerService {
-	return &tickerService{ac}
+func NewTickerRepository(ac api.APIClient) TickerRepository {
+	return &tickerRepository{ac}
 }
 
-func (ts *tickerService) GetTicker(productCode string) (*entity.Ticker, error) {
+func (ts *tickerRepository) GetTicker(productCode string) (*entity.Ticker, error) {
 	url := "ticker"
 	resp, err := ts.ac.DoRequest("GET", url, map[string]string{"product_code": productCode}, nil)
 	if err != nil {
