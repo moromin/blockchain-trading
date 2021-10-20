@@ -10,13 +10,19 @@ import (
 func main() {
 	// fmt.Println(config.Env)
 
-	// bfClient := api.NewAPIClient(config.Env.BfKey, config.Env.BfSecret, "bitflyer")
+	bfTarget := api.Target{
+		BaseURL: api.BitFlyerURL,
+		Header: map[string]string{
+			"Content-Type": "application/json",
+		},
+	}
+	bfClient := api.NewAPIClient(bfTarget)
 
-	// balance := repository.NewBalanceRepository(bfClient)
-	// fmt.Println(balance.GetBalance())
+	balance := repository.NewBalanceRepository(bfClient)
+	fmt.Println(balance.GetBalance())
 
-	// ticker := repository.NewTickerRepository(bfClient)
-	// fmt.Println(ticker.GetTicker(config.Env.ProductCode))
+	ticker := repository.NewTickerRepository(bfClient)
+	fmt.Println(ticker.GetTicker(config.Env.ProductCode))
 
 	// tickerChannel := make(chan entity.Ticker)
 	// realTimeTicker := repository.NewRealTimeTickerRepository(bfClient)
@@ -27,7 +33,14 @@ func main() {
 	// 	fmt.Println(ticker.TruncateDateTime(time.Hour))
 	// }
 
-	cwAPIClient := api.NewAPIClient(config.Env.CwKey, config.Env.CwSecret, "cryptowatch")
+	cwTarget := api.Target{
+		BaseURL: api.CryptoWatchURL,
+		Header: map[string]string{
+			"X-CW-API-Key": config.Env.CwKey,
+			"User-Agent":   fmt.Sprintf("cw-sdk-go@%s", api.CwSdkVersion),
+		},
+	}
+	cwAPIClient := api.NewAPIClient(cwTarget)
 	res := repository.NewCryptoWatchSampleRepository(cwAPIClient)
 	fmt.Println(res.GetMarketPrice())
 }

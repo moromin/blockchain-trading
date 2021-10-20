@@ -2,77 +2,43 @@ package api
 
 import (
 	"bytes"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
-	"strconv"
-	"strings"
-	"time"
 )
 
 const (
-	bitFlyerURL    = "https://api.bitflyer.com/v1/"
-	cryptoWatchURL = "https://api.cryptowat.ch/markets/"
-	cwSdkVersion   = "2.0.0-beta.6"
+	BitFlyerURL    = "https://api.bitflyer.com/v1/"
+	CryptoWatchURL = "https://api.cryptowat.ch/markets/"
+	CwSdkVersion   = "2.0.0-beta.6"
 )
 
 type APIClient interface {
-	DoRequest(method, urlPath string, query map[string]string, data []byte) (body []byte, err error)
+	DoRequest(method, urlPath string, query, header map[string]string, data []byte) (body []byte, err error)
 }
 
 type apiClient struct {
-	key        string
-	secret     string
 	httpClient *http.Client
-	baseURL    string
+	target     Target
+}
+
+type Target struct {
+	BaseURL string
+	Header  map[string]string
 }
 
 // NewAPIClient
-func NewAPIClient(key, secret, clientType string) APIClient {
+func NewAPIClient(target Target) APIClient {
 	ac := &apiClient{
-		key:        key,
-		secret:     secret,
 		httpClient: &http.Client{},
-	}
-	if strings.EqualFold(clientType, "bitflyer") {
-		ac.baseURL = bitFlyerURL
-	} else if strings.EqualFold(clientType, "cryptowatch") {
-		ac.baseURL = cryptoWatchURL
+		target:     target,
 	}
 	return ac
 }
 
-// header returns a different map depending on baseURL.
-func (api apiClient) header(method, endpoint string, body []byte) map[string]string {
-	if strings.EqualFold(api.baseURL, bitFlyerURL) {
-		timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-		message := timestamp + method + endpoint + string(body)
-
-		mac := hmac.New(sha256.New, []byte(api.secret))
-		mac.Write([]byte(message))
-		sign := hex.EncodeToString(mac.Sum(nil))
-		return map[string]string{
-			"ACCESS-KEY":       api.key,
-			"ACCESS-TIMESTAMP": timestamp,
-			"ACCESS-SIGN":      sign,
-			"Content-Type":     "application/json",
-		}
-	} else if strings.EqualFold(api.baseURL, cryptoWatchURL) {
-		return map[string]string{
-			"X-CW-API-Key": api.key,
-			"User-Agent":   fmt.Sprintf("cw-sdk-go@%s", cwSdkVersion),
-		}
-	}
-	return map[string]string{}
-}
-
-func (api *apiClient) DoRequest(method, urlPath string, query map[string]string, data []byte) (body []byte, err error) {
-	baseURL, err := url.Parse(api.baseURL)
+func (api *apiClient) DoRequest(method, urlPath string, query, header map[string]string, data []byte) (body []byte, err error) {
+	baseURL, err := url.Parse(api.target.BaseURL)
 	if err != nil {
 		return
 	}
@@ -92,7 +58,11 @@ func (api *apiClient) DoRequest(method, urlPath string, query map[string]string,
 	}
 	req.URL.RawQuery = q.Encode()
 
-	for key, value := range api.header(method, req.URL.RequestURI(), data) {
+	reqHeader := api.target.Header
+	for key, value := range header {
+		reqHeader[key] = value
+	}
+	for key, value := range reqHeader {
 		req.Header.Add(key, value)
 	}
 	resp, err := api.httpClient.Do(req)
