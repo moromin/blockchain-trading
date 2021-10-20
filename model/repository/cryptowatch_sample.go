@@ -19,8 +19,8 @@ func NewCryptoWatchSampleRepository(ac api.APIClient) CryptoWatchSampleRepositor
 }
 
 func (cws *cryptoWatchSampleRepository) GetMarketPrice() (*entity.CryptoWatchSample, error) {
-	url := "bitflyer/btcjpy/price"
-	resp, err := cws.ac.DoRequest("GET", url, map[string]string{}, nil)
+	urlPath := "bitflyer/btcjpy/price"
+	resp, err := cws.ac.DoRequest("GET", urlPath, map[string]string{}, nil, nil)
 	if err != nil {
 		return nil, err
 	}

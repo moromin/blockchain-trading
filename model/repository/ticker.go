@@ -19,8 +19,8 @@ func NewTickerRepository(ac api.APIClient) TickerRepository {
 }
 
 func (ts *tickerRepository) GetTicker(productCode string) (*entity.Ticker, error) {
-	url := "ticker"
-	resp, err := ts.ac.DoRequest("GET", url, map[string]string{"product_code": productCode}, nil)
+	urlPath := "ticker"
+	resp, err := ts.ac.DoRequest("GET", urlPath, map[string]string{"product_code": productCode}, nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -20,9 +20,11 @@ func NewBalanceRepository(ac api.APIClient) BalanceRepository {
 }
 
 func (bs *balanceRepository) GetBalance() ([]entity.Balance, error) {
-	url := "me/getbalance"
-	resp, err := bs.ac.DoRequest("GET", url, map[string]string{}, nil)
-	log.Printf("url=%s resp=%s", url, string(resp))
+	method := "GET"
+	urlPath := "me/getbalance"
+	header := api.GetBitFlyerPrivateHeader(method, urlPath, nil)
+	resp, err := bs.ac.DoRequest(method, urlPath, map[string]string{}, header, nil)
+	log.Printf("url=%s resp=%s", urlPath, string(resp))
 	if err != nil {
 		log.Printf("action=GetBalance err=%s", err.Error())
 		return nil, err
