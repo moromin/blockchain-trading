@@ -2,56 +2,43 @@ package api
 
 import (
 	"bytes"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
-	"strconv"
-	"time"
 )
 
 const (
-	baseURL = "https://api.bitflyer.com/v1/"
+	BitFlyerURL    = "https://api.bitflyer.com/v1/"
+	CryptoWatchURL = "https://api.cryptowat.ch/markets/"
+	CwSdkVersion   = "2.0.0-beta.6"
 )
 
 type APIClient interface {
-	DoRequest(method, urlPath string, query map[string]string, data []byte) (body []byte, err error)
+	DoRequest(method, urlPath string, query, header map[string]string, data []byte) (body []byte, err error)
 }
 
 type apiClient struct {
-	key        string
-	secret     string
 	httpClient *http.Client
+	target     Target
 }
 
-func NewAPIClient(key, secret string) APIClient {
-	return &apiClient{
-		key:        key,
-		secret:     secret,
+type Target struct {
+	BaseURL string
+	Header  map[string]string
+}
+
+// NewAPIClient
+func NewAPIClient(target Target) APIClient {
+	ac := &apiClient{
 		httpClient: &http.Client{},
+		target:     target,
 	}
+	return ac
 }
 
-func (api apiClient) header(method, endpoint string, body []byte) map[string]string {
-	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-	message := timestamp + method + endpoint + string(body)
-
-	mac := hmac.New(sha256.New, []byte(api.secret))
-	mac.Write([]byte(message))
-	sign := hex.EncodeToString(mac.Sum(nil))
-	return map[string]string{
-		"ACCESS-KEY":       api.key,
-		"ACCESS-TIMESTAMP": timestamp,
-		"ACCESS-SIGN":      sign,
-		"Content-Type":     "application/json",
-	}
-}
-
-func (api *apiClient) DoRequest(method, urlPath string, query map[string]string, data []byte) (body []byte, err error) {
-	baseURL, err := url.Parse(baseURL)
+func (api *apiClient) DoRequest(method, urlPath string, query, header map[string]string, data []byte) (body []byte, err error) {
+	baseURL, err := url.Parse(api.target.BaseURL)
 	if err != nil {
 		return
 	}
@@ -71,7 +58,11 @@ func (api *apiClient) DoRequest(method, urlPath string, query map[string]string,
 	}
 	req.URL.RawQuery = q.Encode()
 
-	for key, value := range api.header(method, req.URL.RequestURI(), data) {
+	reqHeader := api.target.Header
+	for key, value := range header {
+		reqHeader[key] = value
+	}
+	for key, value := range reqHeader {
 		req.Header.Add(key, value)
 	}
 	resp, err := api.httpClient.Do(req)

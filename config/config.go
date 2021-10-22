@@ -9,8 +9,10 @@ import (
 )
 
 type EnvConfig struct {
-	Key         string
-	Secret      string
+	BfKey       string
+	BfSecret    string
+	CwKey       string
+	CwSecret    string
 	ProductCode string
 }
 
@@ -22,8 +24,10 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 	Env = EnvConfig{
-		Key:         os.Getenv("API_KEY"),
-		Secret:      os.Getenv("API_SECRET"),
+		BfKey:       os.Getenv("BF_API_KEY"),
+		BfSecret:    os.Getenv("BF_API_SECRET"),
+		CwKey:       os.Getenv("CW_API_KEY"),
+		CwSecret:    os.Getenv("CW_API_SECRET"),
 		ProductCode: os.Getenv("PRODUCT_CODE"),
 	}
 }
