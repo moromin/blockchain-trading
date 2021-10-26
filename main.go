@@ -13,6 +13,7 @@ func main() {
 	bfTarget := api.Target{
 		BaseURL: api.BitFlyerURL,
 		Header: map[string]string{
+			"ACCESS-KEY":   config.Env.BfKey,
 			"Content-Type": "application/json",
 		},
 	}
