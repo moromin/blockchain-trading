@@ -51,5 +51,6 @@ func main() {
 		// "period": "[]", // every Wednesday
 		// },
 	}
-	fmt.Println(res.GetPastOHLC(params))
+	ohlc, _ := res.GetPastOHLC(params)
+	fmt.Printf("%+v\n", ohlc)
 }
