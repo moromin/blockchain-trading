@@ -4,6 +4,7 @@ import (
 	"blockchain-trading/api"
 	"blockchain-trading/model/entity"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -32,7 +33,7 @@ func (po *pastOHLCRepository) GetPastOHLC(exchangeSymbol, pairSymbol string) (ma
 	if err != nil {
 		return nil, err
 	} else if result.Error != "" {
-		return nil, fmt.Errorf(result.Error)
+		return nil, errors.New(result.Error)
 	}
 
 	srv := map[string][][]float64{}
