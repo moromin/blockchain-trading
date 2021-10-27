@@ -10,20 +10,20 @@ import (
 func main() {
 	// fmt.Println(config.Env)
 
-	bfTarget := api.Target{
-		BaseURL: api.BitFlyerURL,
-		Header: map[string]string{
-			"ACCESS-KEY":   config.Env.BfKey,
-			"Content-Type": "application/json",
-		},
-	}
-	bfClient := api.NewAPIClient(bfTarget)
+	// bfTarget := api.Target{
+	// 	BaseURL: api.BitFlyerURL,
+	// 	Header: map[string]string{
+	// 		"ACCESS-KEY":   config.Env.BfKey,
+	// 		"Content-Type": "application/json",
+	// 	},
+	// }
+	// bfClient := api.NewAPIClient(bfTarget)
 
-	balance := repository.NewBalanceRepository(bfClient)
-	fmt.Println(balance.GetBalance())
+	// balance := repository.NewBalanceRepository(bfClient)
+	// fmt.Println(balance.GetBalance())
 
-	ticker := repository.NewTickerRepository(bfClient)
-	fmt.Println(ticker.GetTicker(config.Env.ProductCode))
+	// ticker := repository.NewTickerRepository(bfClient)
+	// fmt.Println(ticker.GetTicker(config.Env.ProductCode))
 
 	// tickerChannel := make(chan entity.Ticker)
 	// realTimeTicker := repository.NewRealTimeTickerRepository(bfClient)
@@ -42,6 +42,6 @@ func main() {
 		},
 	}
 	cwAPIClient := api.NewAPIClient(cwTarget)
-	res := repository.NewCryptoWatchSampleRepository(cwAPIClient)
-	fmt.Println(res.GetMarketPrice())
+	res := repository.NewPastOHLCRepository(cwAPIClient)
+	res.GetPastOHLC("bitflyer", "btcjpy")
 }
