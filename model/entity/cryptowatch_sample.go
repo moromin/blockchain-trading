@@ -1,7 +1,8 @@
 package entity
 
-type CryptoWatchSample struct {
-	Result struct {
-		Price float64 `json:"price"`
-	} `json:"result"`
+import "encoding/json"
+
+type CryptoWatchResponse struct {
+	Result json.RawMessage `json:"result"`
+	Error  string          `json:"error"`
 }
