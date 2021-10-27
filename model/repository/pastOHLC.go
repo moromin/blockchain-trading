@@ -10,7 +10,7 @@ import (
 )
 
 type PastOHLCRepository interface {
-	GetPastOHLC(exchangeSymbol, pairSymbol string) (map[entity.Period][]entity.Interval, error)
+	GetPastOHLC(params OHLCParams) (map[entity.Period][]entity.Interval, error)
 }
 
 type pastOHLCRepository struct {
@@ -21,9 +21,15 @@ func NewPastOHLCRepository(ac api.APIClient) PastOHLCRepository {
 	return &pastOHLCRepository{ac}
 }
 
-func (po *pastOHLCRepository) GetPastOHLC(exchangeSymbol, pairSymbol string) (map[entity.Period][]entity.Interval, error) {
-	urlPath := fmt.Sprintf("%s/%s/ohlc", exchangeSymbol, pairSymbol)
-	resp, err := po.ac.DoRequest("GET", urlPath, map[string]string{}, nil, nil)
+type OHLCParams struct {
+	ExchangeSymbol string
+	PairSymbol     string
+	Query          map[string]string
+}
+
+func (po *pastOHLCRepository) GetPastOHLC(params OHLCParams) (map[entity.Period][]entity.Interval, error) {
+	urlPath := fmt.Sprintf("%s/%s/ohlc", params.ExchangeSymbol, params.PairSymbol)
+	resp, err := po.ac.DoRequest("GET", urlPath, params.Query, nil, nil)
 	if err != nil {
 		return nil, err
 	}

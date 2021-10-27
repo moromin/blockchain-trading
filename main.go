@@ -43,5 +43,13 @@ func main() {
 	}
 	cwAPIClient := api.NewAPIClient(cwTarget)
 	res := repository.NewPastOHLCRepository(cwAPIClient)
-	res.GetPastOHLC("bitflyer", "btcjpy")
+	params := repository.OHLCParams{
+		ExchangeSymbol: "bitflyer",
+		PairSymbol:     "btcjpy",
+		// Query: map[string]string{
+		// 	"after": "1609426800", // 2021/01/01 00:00:00 UTC+9
+		// "period": "[]", // every Wednesday
+		// },
+	}
+	fmt.Println(res.GetPastOHLC(params))
 }
