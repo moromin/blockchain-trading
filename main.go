@@ -1,12 +1,5 @@
 package main
 
-import (
-	"blockchain-trading/api"
-	"blockchain-trading/config"
-	"blockchain-trading/model/repository"
-	"fmt"
-)
-
 func main() {
 	// fmt.Println(config.Env)
 
@@ -34,23 +27,23 @@ func main() {
 	// 	fmt.Println(ticker.TruncateDateTime(time.Hour))
 	// }
 
-	cwTarget := api.Target{
-		BaseURL: api.CryptoWatchURL,
-		Header: map[string]string{
-			"X-CW-API-Key": config.Env.CwKey,
-			"User-Agent":   fmt.Sprintf("cw-sdk-go@%s", api.CwSdkVersion),
-		},
-	}
-	cwAPIClient := api.NewAPIClient(cwTarget)
-	res := repository.NewPastOHLCRepository(cwAPIClient)
-	params := repository.OHLCParams{
-		ExchangeSymbol: "bitflyer",
-		PairSymbol:     "btcjpy",
-		// Query: map[string]string{
-		// 	"after": "1609426800", // 2021/01/01 00:00:00 UTC+9
-		// "period": "[]", // every Wednesday
-		// },
-	}
-	ohlc, _ := res.GetPastOHLC(params)
-	fmt.Printf("%+v\n", ohlc)
+	// cwTarget := api.Target{
+	// 	BaseURL: api.CryptoWatchURL,
+	// 	Header: map[string]string{
+	// 		"X-CW-API-Key": config.Env.CwKey,
+	// 		"User-Agent":   fmt.Sprintf("cw-sdk-go@%s", api.CwSdkVersion),
+	// 	},
+	// }
+	// cwAPIClient := api.NewAPIClient(cwTarget)
+	// res := repository.NewPastOHLCRepository(cwAPIClient)
+	// params := repository.OHLCParams{
+	// 	ExchangeSymbol: "bitflyer",
+	// 	PairSymbol:     "btcjpy",
+	// 	Query: map[string]string{
+	// 		"after": "1609426800", // 2021/01/01 00:00:00 UTC+9
+	// 	"period": "[]", // every Wednesday
+	// 	},
+	// }
+	// ohlc, _ := res.GetPastOHLC(params)
+	// fmt.Printf("%+v\n", ohlc)
 }
