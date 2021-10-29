@@ -21,3 +21,4 @@
 
 # VSCode
 *.code-workspace
+.vscode/

@@ -1,0 +1,3 @@
+[submodule "cw-sdk-go"]
+	path = cw-sdk-go
+	url = https://github.com/cryptowatch/cw-sdk-go.git
