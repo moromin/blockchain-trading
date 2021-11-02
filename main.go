@@ -1,5 +1,12 @@
 package main
 
+import (
+	"blockchain-trading/config"
+	"fmt"
+
+	"code.cryptowat.ch/cw-sdk-go/client/rest"
+)
+
 func main() {
 	// fmt.Println(config.Env)
 
@@ -27,23 +34,15 @@ func main() {
 	// 	fmt.Println(ticker.TruncateDateTime(time.Hour))
 	// }
 
-	// cwTarget := api.Target{
-	// 	BaseURL: api.CryptoWatchURL,
-	// 	Header: map[string]string{
-	// 		"X-CW-API-Key": config.Env.CwKey,
-	// 		"User-Agent":   fmt.Sprintf("cw-sdk-go@%s", api.CwSdkVersion),
-	// 	},
-	// }
-	// cwAPIClient := api.NewAPIClient(cwTarget)
-	// res := repository.NewPastOHLCRepository(cwAPIClient)
-	// params := repository.OHLCParams{
-	// 	ExchangeSymbol: "bitflyer",
-	// 	PairSymbol:     "btcjpy",
-	// 	Query: map[string]string{
-	// 		"after": "1609426800", // 2021/01/01 00:00:00 UTC+9
-	// 	"period": "[]", // every Wednesday
-	// 	},
-	// }
-	// ohlc, _ := res.GetPastOHLC(params)
-	// fmt.Printf("%+v\n", ohlc)
+	cwParams := rest.RESTClientParams{
+		URL:    "", // If URL is empty, the default RESTURL will be specified.
+		APIKey: config.Env.CwKey,
+	}
+	cwClient := rest.NewRESTClient(&cwParams)
+	ohlc, err := cwClient.GetOHLC("bitflyer", "btcjpy")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("%+v\n", ohlc)
 }
