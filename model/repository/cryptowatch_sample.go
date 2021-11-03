@@ -7,7 +7,7 @@ import (
 )
 
 type CryptoWatchSampleRepository interface {
-	GetMarketPrice() (*entity.CryptoWatchSample, error)
+	GetMarketPrice() (*entity.CryptoWatchResponse, error)
 }
 
 type cryptoWatchSampleRepository struct {
@@ -18,14 +18,14 @@ func NewCryptoWatchSampleRepository(ac api.APIClient) CryptoWatchSampleRepositor
 	return &cryptoWatchSampleRepository{ac}
 }
 
-func (cws *cryptoWatchSampleRepository) GetMarketPrice() (*entity.CryptoWatchSample, error) {
+func (cws *cryptoWatchSampleRepository) GetMarketPrice() (*entity.CryptoWatchResponse, error) {
 	urlPath := "bitflyer/btcjpy/price"
 	resp, err := cws.ac.DoRequest("GET", urlPath, map[string]string{}, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var res entity.CryptoWatchSample
+	var res entity.CryptoWatchResponse
 	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return nil, err
