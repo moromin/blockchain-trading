@@ -23,6 +23,7 @@ func GetBitFlyerPrivateHeader(method, urlPath string, body []byte) map[string]st
 	mac.Write([]byte(message))
 	sign := hex.EncodeToString(mac.Sum(nil))
 	return map[string]string{
+		"ACCESS-KEY":       config.Env.BfKey,
 		"ACCESS-TIMESTAMP": timestamp,
 		"ACCESS-SIGN":      sign,
 	}

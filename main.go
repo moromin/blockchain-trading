@@ -1,29 +1,28 @@
 package main
 
 import (
+	"blockchain-trading/api"
 	"blockchain-trading/config"
+	"blockchain-trading/model/repository"
 	"fmt"
-
-	"code.cryptowat.ch/cw-sdk-go/client/rest"
 )
 
 func main() {
 	// fmt.Println(config.Env)
 
-	// bfTarget := api.Target{
-	// 	BaseURL: api.BitFlyerURL,
-	// 	Header: map[string]string{
-	// 		"ACCESS-KEY":   config.Env.BfKey,
-	// 		"Content-Type": "application/json",
-	// 	},
-	// }
-	// bfClient := api.NewAPIClient(bfTarget)
+	bfTarget := api.Target{
+		BaseURL: api.BitFlyerURL,
+		Header: map[string]string{
+			"Content-Type": "application/json",
+		},
+	}
+	bfClient := api.NewAPIClient(bfTarget)
 
-	// balance := repository.NewBalanceRepository(bfClient)
-	// fmt.Println(balance.GetBalance())
+	balance := repository.NewBalanceRepository(bfClient)
+	fmt.Println(balance.GetBalance())
 
-	// ticker := repository.NewTickerRepository(bfClient)
-	// fmt.Println(ticker.GetTicker(config.Env.ProductCode))
+	ticker := repository.NewTickerRepository(bfClient)
+	fmt.Println(ticker.GetTicker(config.Env.ProductCode))
 
 	// tickerChannel := make(chan entity.Ticker)
 	// realTimeTicker := repository.NewRealTimeTickerRepository(bfClient)
@@ -34,15 +33,14 @@ func main() {
 	// 	fmt.Println(ticker.TruncateDateTime(time.Hour))
 	// }
 
-	cwParams := rest.RESTClientParams{
-		URL:    "", // If URL is empty, the default RESTURL will be specified.
-		APIKey: config.Env.CwKey,
+	cwTarget := api.Target{
+		BaseURL: api.CryptoWatchURL,
+		Header: map[string]string{
+			"X-CW-API-Key": config.Env.CwKey,
+			"User-Agent":   fmt.Sprintf("cw-sdk-go@%s", api.CwSdkVersion),
+		},
 	}
-	cwClient := rest.NewRESTClient(&cwParams)
-	ohlc, err := cwClient.GetOHLC("bitflyer", "btcjpy")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Printf("%+v\n", ohlc)
+	cwAPIClient := api.NewAPIClient(cwTarget)
+	res := repository.NewCryptoWatchSampleRepository(cwAPIClient)
+	fmt.Println(res.GetMarketPrice())
 }
