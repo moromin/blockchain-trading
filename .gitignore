@@ -18,3 +18,7 @@
 
 # environment setting file
 *.env
+
+# VSCode
+*.code-workspace
+.vscode/
