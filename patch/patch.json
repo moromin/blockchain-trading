@@ -1,0 +1,9 @@
+[
+	{
+		"source": "CW_PKG_PATH/client/rest/ohlc.go",
+		"patch": [
+			"add_query_to_argument.patch",
+			"add_query_params_to_do_method.patch"
+		]
+	}
+]

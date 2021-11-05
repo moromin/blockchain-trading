@@ -1,0 +1,6 @@
+@@
+@@
+-func (c *RESTClient)GetOHLC(...) (map[common.Period][]common.Interval, error) {
++func (c *RESTClient)GetOHLC(..., query map[string]string) (map[common.Period][]common.Interval, error) {
+   ...
+}
