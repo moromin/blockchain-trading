@@ -3,9 +3,14 @@ package main
 import (
 	"blockchain-trading/config"
 	"fmt"
+	"strconv"
+	"time"
 
 	"code.cryptowat.ch/cw-sdk-go/client/rest"
+	"code.cryptowat.ch/cw-sdk-go/common"
 )
+
+const dateFormat = "2006-01-02 15:04:05"
 
 func main() {
 	// fmt.Println(config.Env)
@@ -39,7 +44,17 @@ func main() {
 		APIKey: config.Env.CwKey,
 	}
 	cwClient := rest.NewRESTClient(&cwParams)
-	ohlc, err := cwClient.GetOHLC("bitflyer", "btcjpy")
+	after, err := time.Parse(dateFormat, "2021-11-05 00:00:00")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	cwQuery := map[string]string{
+		"after":   strconv.Itoa(int(after.Unix())),
+		"periods": string(common.Period1H),
+	}
+	// fmt.Println(cwQuery)
+	ohlc, err := cwClient.GetOHLC("bitflyer", "btcjpy", cwQuery)
 	if err != nil {
 		fmt.Println(err)
 		return
