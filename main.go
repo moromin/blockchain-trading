@@ -6,6 +6,7 @@ import (
 	"blockchain-trading/model/entity"
 	"blockchain-trading/model/repository"
 	"fmt"
+	"time"
 
 	"github.com/davecgh/go-spew/spew"
 )
@@ -65,14 +66,41 @@ func main() {
 	// fmt.Printf("%+v\n", ohlc)
 	// order := repository.NewOrderRepository(bfClient)
 
-	// order := repository.NewOrderRepository(bfClient)
-	_ = repository.NewOrderRepository(bfClient)
+	// Create order repository
+	// Set order parameters (ex. "product_code": "BTC_JPY")
+	order := repository.NewOrderRepository(bfClient)
 	var orderParams entity.Order
 	if err := orderParams.SetOrderParams(jsonFilePath + "order.json"); err != nil {
 		fmt.Println(err)
 		return
 	}
 	spew.Dump(orderParams)
+
+	// Send order every 10 minutes for an hour.
+	orderInterval := time.Minute * 10
+	orderDeadline := time.Minute * 60
+	tk := time.NewTicker(orderInterval)
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case <-done:
+				return
+			case <-tk.C:
+				respOrder, err := order.SendOrder(&orderParams)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				fmt.Println(time.Now())
+				spew.Dump(respOrder)
+			}
+		}
+	}()
+	time.Sleep(orderDeadline)
+	tk.Stop()
+	done <- true
+	fmt.Println("Ticker stopped")
 
 	// respOrder, err := order.SendOrder(&orderParams)
 	// if err != nil {
