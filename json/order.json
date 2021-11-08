@@ -1,9 +1,9 @@
 {
-	"product_code": "BTC_JPY",
-	"child_order_type": "LIMIT",
+	"product_code": "MONA_JPY",
+	"child_order_type": "MARKET",
 	"side": "BUY",
-	"price": 1000,
+	"price": 0,
 	"size": 0.1,
-	"minute_to_expire": 10000,
+	"minute_to_expire": 60,
 	"time_in_force": "GTC"
-  }
+}

@@ -1,7 +1,10 @@
 package main
 
 import (
+	"blockchain-trading/api"
+	"blockchain-trading/config"
 	"blockchain-trading/model/entity"
+	"blockchain-trading/model/repository"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -17,14 +20,14 @@ const (
 func main() {
 	// fmt.Println(config.Env)
 
-	// bfTarget := api.Target{
-	// 	BaseURL: api.BitFlyerURL,
-	// 	Header: map[string]string{
-	// 		"ACCESS-KEY":   config.Env.BfKey,
-	// 		"Content-Type": "application/json",
-	// 	},
-	// }
-	// bfClient := api.NewAPIClient(bfTarget)
+	bfTarget := api.Target{
+		BaseURL: api.BitFlyerURL,
+		Header: map[string]string{
+			"ACCESS-KEY":   config.Env.BfKey,
+			"Content-Type": "application/json",
+		},
+	}
+	bfClient := api.NewAPIClient(bfTarget)
 
 	// balance := repository.NewBalanceRepository(bfClient)
 	// fmt.Println(balance.GetBalance())
@@ -64,6 +67,7 @@ func main() {
 	// fmt.Printf("%+v\n", ohlc)
 	// order := repository.NewOrderRepository(bfClient)
 
+	order := repository.NewOrderRepository(bfClient)
 	var orderParams entity.Order
 	raw, err := ioutil.ReadFile(jsonFilePath + "order.json")
 	if err != nil {
@@ -76,5 +80,10 @@ func main() {
 		return
 	}
 	spew.Dump(orderParams)
-	// respOrder, err := order.SendOrder()
+	respOrder, err := order.SendOrder(&orderParams)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	spew.Dump(respOrder)
 }
