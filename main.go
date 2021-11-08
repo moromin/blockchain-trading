@@ -1,16 +1,18 @@
 package main
 
 import (
-	"blockchain-trading/config"
+	"blockchain-trading/model/entity"
+	"encoding/json"
 	"fmt"
-	"strconv"
-	"time"
+	"io/ioutil"
 
-	"code.cryptowat.ch/cw-sdk-go/client/rest"
-	"code.cryptowat.ch/cw-sdk-go/common"
+	"github.com/davecgh/go-spew/spew"
 )
 
-const dateFormat = "2006-01-02 15:04:05"
+const (
+	dateFormat   = "2006-01-02 15:04:05"
+	jsonFilePath = "json/"
+)
 
 func main() {
 	// fmt.Println(config.Env)
@@ -39,25 +41,40 @@ func main() {
 	// 	fmt.Println(ticker.TruncateDateTime(time.Hour))
 	// }
 
-	cwParams := rest.RESTClientParams{
-		URL:    "", // If URL is empty, the default RESTURL will be specified.
-		APIKey: config.Env.CwKey,
-	}
-	cwClient := rest.NewRESTClient(&cwParams)
-	after, err := time.Parse(dateFormat, "2021-11-05 00:00:00")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	cwQuery := map[string]string{
-		"after":   strconv.Itoa(int(after.Unix())),
-		"periods": string(common.Period1H),
-	}
+	// cwParams := rest.RESTClientParams{
+	// 	URL:    "", // If URL is empty, the default RESTURL will be specified.
+	// 	APIKey: config.Env.CwKey,
+	// }
+	// cwClient := rest.NewRESTClient(&cwParams)
+	// after, err := time.Parse(dateFormat, "2021-11-05 00:00:00")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// cwQuery := map[string]string{
+	// 	"after":   strconv.Itoa(int(after.Unix())),
+	// 	"periods": string(common.Period1H),
+	// }
 	// fmt.Println(cwQuery)
-	ohlc, err := cwClient.GetOHLC("bitflyer", "btcjpy", cwQuery)
+	// ohlc, err := cwClient.GetOHLC("bitflyer", "btcjpy", cwQuery)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// fmt.Printf("%+v\n", ohlc)
+	// order := repository.NewOrderRepository(bfClient)
+
+	var orderParams entity.Order
+	raw, err := ioutil.ReadFile(jsonFilePath + "order.json")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("%+v\n", ohlc)
+	err = json.Unmarshal(raw, &orderParams)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	spew.Dump(orderParams)
+	// respOrder, err := order.SendOrder()
 }
