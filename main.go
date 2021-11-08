@@ -5,9 +5,7 @@ import (
 	"blockchain-trading/config"
 	"blockchain-trading/model/entity"
 	"blockchain-trading/model/repository"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 
 	"github.com/davecgh/go-spew/spew"
 )
@@ -67,23 +65,19 @@ func main() {
 	// fmt.Printf("%+v\n", ohlc)
 	// order := repository.NewOrderRepository(bfClient)
 
-	order := repository.NewOrderRepository(bfClient)
+	// order := repository.NewOrderRepository(bfClient)
+	_ = repository.NewOrderRepository(bfClient)
 	var orderParams entity.Order
-	raw, err := ioutil.ReadFile(jsonFilePath + "order.json")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = json.Unmarshal(raw, &orderParams)
-	if err != nil {
+	if err := orderParams.SetOrderParams(jsonFilePath + "order.json"); err != nil {
 		fmt.Println(err)
 		return
 	}
 	spew.Dump(orderParams)
-	respOrder, err := order.SendOrder(&orderParams)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	spew.Dump(respOrder)
+
+	// respOrder, err := order.SendOrder(&orderParams)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// spew.Dump(respOrder)
 }
