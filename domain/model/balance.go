@@ -1,4 +1,4 @@
-package entity
+package model
 
 type Balance struct {
 	CurrentCode string  `json:"currency_code"`

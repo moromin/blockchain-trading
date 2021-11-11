@@ -1,4 +1,4 @@
-package entity
+package model
 
 type JsonRPC2 struct {
 	Version string      `json:"jsonrpc"`
