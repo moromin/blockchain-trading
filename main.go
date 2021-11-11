@@ -6,6 +6,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 )
 
+// Use this when call Cryptowatch SDK methods to get past OHLC data.
 const dateFormat = "2006-01-02 15:04:05"
 
 func main() {
