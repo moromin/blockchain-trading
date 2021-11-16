@@ -1,7 +1,9 @@
 package main
 
 import (
-	"blockchain-trading/injector"
+	"blockchain-trading/config"
+	"blockchain-trading/infra"
+	"blockchain-trading/usecase"
 
 	"github.com/davecgh/go-spew/spew"
 )
@@ -10,11 +12,18 @@ import (
 const dateFormat = "2006-01-02 15:04:05"
 
 func main() {
-	exchangeUsecase := injector.InjectExchangeUsecase()
+	target := infra.Target{
+		BaseURL: infra.BitFlyerURL,
+		Header: map[string]string{
+			"ACCESS-KEY":   config.Env.BfKey,
+			"Content-Type": "application/json",
+		},
+	}
 
-	balance, _ := exchangeUsecase.ConfirmBalace()
+	ac := infra.NewAPIClient(target)
+	er := infra.NewExchangeRepository(ac)
+	es := usecase.NewExchangeUsecase(er)
+
+	balance, _ := es.ConfirmBalace()
 	spew.Dump(balance)
-
-	ticker, _ := exchangeUsecase.ViewTicker("BTC_JPY")
-	spew.Dump(ticker)
 }

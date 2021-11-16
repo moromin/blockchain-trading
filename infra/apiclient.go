@@ -39,16 +39,10 @@ type Target struct {
 	Header  map[string]string
 }
 
-func NewAPIClient() APIClient {
+func NewAPIClient(target Target) APIClient {
 	ac := &apiClient{
 		httpClient: &http.Client{},
-		target: Target{
-			BaseURL: BitFlyerURL,
-			Header: map[string]string{
-				"ACCESS-KEY":   config.Env.BfKey,
-				"Content-Type": "application/json",
-			},
-		},
+		target:     target,
 	}
 	return ac
 }
