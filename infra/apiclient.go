@@ -40,11 +40,10 @@ type Target struct {
 }
 
 func NewAPIClient(target Target) APIClient {
-	ac := &apiClient{
+	return &apiClient{
 		httpClient: &http.Client{},
 		target:     target,
 	}
-	return ac
 }
 
 func (api *apiClient) DoRequest(method, urlPath string, query, header map[string]string, data []byte) ([]byte, error) {
