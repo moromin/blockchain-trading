@@ -50,3 +50,8 @@ func (ei *ExchangeInteractor) OrderRegularly(orderData *entity.OrderData, interv
 	done <- true
 	fmt.Println("Ticker stopped")
 }
+
+func (di *ExchangeInteractor) ConfirmOHLC(query map[string]string) (ohlcs []entity.OHLC, err error) {
+	ohlcs, err = di.ExchangeRepository.GetOHLC(query)
+	return
+}
