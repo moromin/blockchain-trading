@@ -8,7 +8,9 @@ import (
 	"blockchain-trading/interfaces/presenter"
 	"fmt"
 	"net/url"
-	// _ "github.com/lib/pq"
+
+	"github.com/davecgh/go-spew/spew"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -47,7 +49,7 @@ func main() {
 	target := infrastructure.Target{
 		BaseURL: baseURL,
 		Header: map[string]string{
-			"ACCESS-KEY":   config.Env.BinanceKey,
+			"X-MBX-APIKEY": config.Env.BinanceKey,
 			"Content-Type": "application/json",
 		},
 	}
@@ -58,24 +60,39 @@ func main() {
 		return
 	}
 
-	query := map[string]string{
-		"symbol":   "BTCUSDT",
-		"interval": exchange.Interval1m,
-	}
+	// query := map[string]string{
+	// 	"symbol":   "BTCUSDT",
+	// 	"interval": exchange.Interval1m,
+	// }
 
+	// var coins []entity.Coin
 	if err := container.Invoke(func(d *presenter.ExchangePresenter) {
-		d.ShowOHLC(query)
+		coins, err := d.GetAllCoin()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		spew.Dump(coins)
 	}); err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	// Confirm DB
-	// conn, err := sql.Open("postgres", "user=root password=secret host=localhost dbname=test sslmode=disable")
+	// conn, err := sql.Open("postgres", "user=root password=secret host=localhost dbname=ohlc sslmode=disable")
 	// if err != nil {
 	// 	panic(err)
 	// }
 	// handler := infrastructure.SqlHandler{Conn: conn}
-	// _, err = di.NewDB(handler)
+	// container, err = di.NewDB(handler)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
+	// symbol := "BTCUSDT"
+	// if err := container.Invoke(func(dbp *presenter.DatabasePresenter) {
+	// 	dbp.RegisterSymbol(symbol)
+	// }); err != nil {
+	// 	panic(err)
+	// }
 }
