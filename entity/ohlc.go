@@ -12,5 +12,4 @@ type OHLC struct {
 	NumberOfTrades           int64
 	TakerBuyBaseAssetVolume  float64
 	TakerBuyQuoteAssetVolume float64
-	Ignore                   float64 // Ignore this field because legacy.
 }
