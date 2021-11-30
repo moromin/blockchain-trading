@@ -55,3 +55,8 @@ func (di *ExchangeInteractor) ConfirmOHLC(query map[string]string) (ohlcs []enti
 	ohlcs, err = di.ExchangeRepository.GetOHLC(query)
 	return
 }
+
+func (di *ExchangeInteractor) ConfirmAllCoinInfomation() (coins []entity.Coin, err error) {
+	coins, err = di.ExchangeRepository.GetAllCoinInfomation()
+	return
+}

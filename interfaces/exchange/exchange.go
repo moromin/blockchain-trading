@@ -116,12 +116,12 @@ func (er *ExchangeRepository) SendOrder(orderData *entity.OrderData) (*entity.Or
 	return &order, nil
 }
 
-func (dr *ExchangeRepository) GetOHLC(query map[string]string) ([]entity.OHLC, error) {
+func (er *ExchangeRepository) GetOHLC(query map[string]string) ([]entity.OHLC, error) {
 	endpoint := GetOHLC
 	method := endpoint.Method()
 	urlPath := endpoint.String()
 	header := endpoint.Header(nil)
-	resp, err := dr.APIClient.DoRequest(method, urlPath, query, header, nil)
+	resp, err := er.APIClient.DoRequest(method, urlPath, query, header, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -157,4 +157,22 @@ func (dr *ExchangeRepository) GetOHLC(query map[string]string) ([]entity.OHLC, e
 	}
 
 	return ohlcs, nil
+}
+
+func (er *ExchangeRepository) GetAllCoinInfomation() ([]entity.Coin, error) {
+	endpoint := GetAllCoinInfomation
+	method := endpoint.Method()
+	urlPath := endpoint.String()
+	query := endpoint.Query(nil)
+	resp, err := er.APIClient.DoRequest(method, urlPath, query, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var coins []entity.Coin
+	err = json.Unmarshal(resp, &coins)
+	if err != nil {
+		return nil, errors.Wrap(err, "Unmarshal coins")
+	}
+	return coins, nil
 }
