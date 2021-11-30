@@ -3,13 +3,14 @@ package main
 import (
 	"blockchain-trading/config"
 	"blockchain-trading/di"
+	"blockchain-trading/entity"
 	"blockchain-trading/infrastructure"
 	"blockchain-trading/interfaces/exchange"
 	"blockchain-trading/interfaces/presenter"
+	"database/sql"
 	"fmt"
 	"net/url"
 
-	"github.com/davecgh/go-spew/spew"
 	_ "github.com/lib/pq"
 )
 
@@ -65,34 +66,44 @@ func main() {
 	// 	"interval": exchange.Interval1m,
 	// }
 
-	// var coins []entity.Currency
+	var currencies []entity.Currency
 	if err := container.Invoke(func(d *presenter.ExchangePresenter) {
-		currencies, err := d.GetAllCurrency()
+		currencies, err = d.GetAllCurrency()
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		spew.Dump(currencies)
+		// spew.Dump(currencies)
 	}); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// Confirm DB
-	// conn, err := sql.Open("postgres", "user=root password=secret host=localhost dbname=ohlc sslmode=disable")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// handler := infrastructure.SqlHandler{Conn: conn}
-	// container, err = di.NewDB(handler)
-	// if err != nil {
-	// 	fmt.Println(err)
+	// fmt.Println("id, coin, name")
+	// for i, data := range currencies {
+	// 	fmt.Println(i, data.Coin, data.Name)
 	// }
 
-	// symbol := "BTCUSDT"
-	// if err := container.Invoke(func(dbp *presenter.DatabasePresenter) {
-	// 	dbp.RegisterSymbol(symbol)
-	// }); err != nil {
-	// 	panic(err)
-	// }
+	// Confirm DB
+	conn, err := sql.Open("postgres", "user=root password=secret host=localhost dbname=ohlc sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+	handler := infrastructure.SqlHandler{Conn: conn}
+	container, err = di.NewDB(handler)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if err := container.Invoke(func(dbp *presenter.DatabasePresenter) {
+		err = dbp.RegisterCurrencies(currencies)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		// dbp.ShowCurrencies()
+	}); err != nil {
+		panic(err)
+	}
+
 }
