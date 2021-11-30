@@ -43,12 +43,11 @@ const (
 type Endpoint string
 
 const (
-	GetBalance           Endpoint = "v1/me/getbalance"
-	GetTicker            Endpoint = "v1/ticker"
-	SendOrder            Endpoint = "v1/me/sendchildorder"
-	GetOHLC              Endpoint = "/api/v3/klines"
-	GetAllCoinInfomation Endpoint = "/sapi/v1/capital/config/getall"
-	CheckServerTime      Endpoint = "/api/v3/time"
+	GetBalance               Endpoint = "v1/me/getbalance"
+	GetTicker                Endpoint = "v1/ticker"
+	SendOrder                Endpoint = "v1/me/sendchildorder"
+	GetOHLC                  Endpoint = "/api/v3/klines"
+	GetAllCurrencyInfomation Endpoint = "/sapi/v1/capital/config/getall"
 )
 
 func (e Endpoint) String() string {
@@ -57,7 +56,7 @@ func (e Endpoint) String() string {
 
 func (e Endpoint) Method() string {
 	switch e {
-	case GetBalance, GetTicker, GetOHLC, GetAllCoinInfomation, CheckServerTime:
+	case GetBalance, GetTicker, GetOHLC, GetAllCurrencyInfomation:
 		return "GET"
 	case SendOrder:
 		return "POST"
@@ -77,7 +76,7 @@ func (e Endpoint) Header(body []byte) map[string]string {
 
 func (e Endpoint) Query(body []byte) map[string]string {
 	switch e {
-	case GetAllCoinInfomation:
+	case GetAllCurrencyInfomation:
 		return getBinancePrivateQuery(body)
 	default:
 		return nil

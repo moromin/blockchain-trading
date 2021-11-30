@@ -159,8 +159,8 @@ func (er *ExchangeRepository) GetOHLC(query map[string]string) ([]entity.OHLC, e
 	return ohlcs, nil
 }
 
-func (er *ExchangeRepository) GetAllCoinInfomation() ([]entity.Coin, error) {
-	endpoint := GetAllCoinInfomation
+func (er *ExchangeRepository) GetAllCurrencyInfomation() ([]entity.Currency, error) {
+	endpoint := GetAllCurrencyInfomation
 	method := endpoint.Method()
 	urlPath := endpoint.String()
 	query := endpoint.Query(nil)
@@ -169,10 +169,10 @@ func (er *ExchangeRepository) GetAllCoinInfomation() ([]entity.Coin, error) {
 		return nil, err
 	}
 
-	var coins []entity.Coin
-	err = json.Unmarshal(resp, &coins)
+	var currencies []entity.Currency
+	err = json.Unmarshal(resp, &currencies)
 	if err != nil {
-		return nil, errors.Wrap(err, "Unmarshal coins")
+		return nil, errors.Wrap(err, "Unmarshal currencies")
 	}
-	return coins, nil
+	return currencies, nil
 }

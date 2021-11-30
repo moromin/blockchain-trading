@@ -65,14 +65,14 @@ func main() {
 	// 	"interval": exchange.Interval1m,
 	// }
 
-	// var coins []entity.Coin
+	// var coins []entity.Currency
 	if err := container.Invoke(func(d *presenter.ExchangePresenter) {
-		coins, err := d.GetAllCoin()
+		currencies, err := d.GetAllCurrency()
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		spew.Dump(coins)
+		spew.Dump(currencies)
 	}); err != nil {
 		fmt.Println(err)
 		return
