@@ -53,15 +53,15 @@ func New(target infrastructure.Target) (*dig.Container, error) {
 	return c, nil
 }
 
-func NewDB(handler infrastructure.SqlHandler) (*dig.Container, error) {
-	c := dig.New()
+// func NewDB(handler infrastructure.SqlHandler) (*dig.Container, error) {
+// 	c := dig.New()
 
-	// sql handler
-	if err := c.Provide(func() infrastructure.SqlHandler {
-		return handler
-	}); err != nil {
-		return nil, errors.WithStack(err)
-	}
+// 	// sql handler
+// 	if err := c.Provide(func() infrastructure.SqlHandler {
+// 		return handler
+// 	}); err != nil {
+// 		return nil, errors.WithStack(err)
+// 	}
 
-	return c, nil
-}
+// 	return c, nil
+// }

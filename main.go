@@ -8,8 +8,7 @@ import (
 	"blockchain-trading/interfaces/presenter"
 	"fmt"
 	"net/url"
-
-	_ "github.com/lib/pq"
+	// _ "github.com/lib/pq"
 )
 
 func main() {
