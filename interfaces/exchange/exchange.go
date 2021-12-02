@@ -2,17 +2,19 @@ package exchange
 
 import (
 	"blockchain-trading/entity"
+	"blockchain-trading/interfaces/api"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
+	"strconv"
 
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 )
 
 type ExchangeRepository struct {
-	APIClient APIClient
+	APIClient api.APIClient
 }
 
 func (er *ExchangeRepository) GetBalance() ([]entity.Balance, error) {
@@ -112,4 +114,47 @@ func (er *ExchangeRepository) SendOrder(orderData *entity.OrderData) (*entity.Or
 		return nil, errors.Wrap(err, "Unmarshal order")
 	}
 	return &order, nil
+}
+
+func (dr *ExchangeRepository) GetOHLC(query map[string]string) ([]entity.OHLC, error) {
+	endpoint := GetOHLC
+	method := endpoint.Method()
+	urlPath := endpoint.String()
+	header := endpoint.Header(nil)
+	resp, err := dr.APIClient.DoRequest(method, urlPath, query, header, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var data interface{}
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		panic(err)
+	}
+	ohlcArray, ok := data.([]interface{})
+	if !ok {
+		panic(ok)
+	}
+
+	ohlcs := make([]entity.OHLC, len(ohlcArray))
+	for i, ohlc := range ohlcArray {
+		data, ok := ohlc.([]interface{})
+		if !ok {
+			panic(ok)
+		}
+
+		ohlcs[i].OpenTime = int64(data[0].(float64))
+		ohlcs[i].Open, _ = strconv.ParseFloat(data[1].(string), 64)
+		ohlcs[i].High, _ = strconv.ParseFloat(data[2].(string), 64)
+		ohlcs[i].Low, _ = strconv.ParseFloat(data[3].(string), 64)
+		ohlcs[i].Close, _ = strconv.ParseFloat(data[4].(string), 64)
+		ohlcs[i].Volume, _ = strconv.ParseFloat(data[5].(string), 64)
+		ohlcs[i].CloseTime = int64(data[6].(float64))
+		ohlcs[i].QuoteAssetVolume, _ = strconv.ParseFloat(data[7].(string), 64)
+		ohlcs[i].NumberOfTrades = int64(data[8].(float64))
+		ohlcs[i].TakerBuyBaseAssetVolume, _ = strconv.ParseFloat(data[9].(string), 64)
+		ohlcs[i].TakerBuyQuoteAssetVolume, _ = strconv.ParseFloat(data[10].(string), 64)
+	}
+
+	return ohlcs, nil
 }

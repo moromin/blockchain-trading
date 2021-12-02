@@ -19,3 +19,12 @@ func (ep *ExchangePresenter) ShowBalance() {
 	}
 	spew.Dump(balance)
 }
+
+func (dp *ExchangePresenter) ShowOHLC(query map[string]string) {
+	ohlcs, err := dp.Interactor.ConfirmOHLC(query)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	spew.Dump(ohlcs)
+}

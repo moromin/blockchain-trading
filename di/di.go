@@ -2,6 +2,7 @@ package di
 
 import (
 	"blockchain-trading/infrastructure"
+	"blockchain-trading/interfaces/api"
 	"blockchain-trading/interfaces/exchange"
 	"blockchain-trading/interfaces/presenter"
 	"blockchain-trading/usecase"
@@ -14,6 +15,7 @@ import (
 func New(target infrastructure.Target) (*dig.Container, error) {
 	c := dig.New()
 
+	// exchange
 	if err := c.Provide(func(ei *usecase.ExchangeInteractor) *presenter.ExchangePresenter {
 		return &presenter.ExchangePresenter{Interactor: ei}
 	}); err != nil {
@@ -26,13 +28,14 @@ func New(target infrastructure.Target) (*dig.Container, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	if err := c.Provide(func(ac exchange.APIClient) *exchange.ExchangeRepository {
+	if err := c.Provide(func(ac api.APIClient) *exchange.ExchangeRepository {
 		return &exchange.ExchangeRepository{APIClient: ac}
 	}); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	if err := c.Provide(func(t infrastructure.Target) exchange.APIClient {
+	// apiclient
+	if err := c.Provide(func(t infrastructure.Target) api.APIClient {
 		return &infrastructure.APIClient{
 			HTTPClient: &http.Client{},
 			Target:     t,
@@ -41,9 +44,24 @@ func New(target infrastructure.Target) (*dig.Container, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	c.Provide(func() infrastructure.Target {
+	if err := c.Provide(func() infrastructure.Target {
 		return target
-	})
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
 
 	return c, nil
 }
+
+// func NewDB(handler infrastructure.SqlHandler) (*dig.Container, error) {
+// 	c := dig.New()
+
+// 	// sql handler
+// 	if err := c.Provide(func() infrastructure.SqlHandler {
+// 		return handler
+// 	}); err != nil {
+// 		return nil, errors.WithStack(err)
+// 	}
+
+// 	return c, nil
+// }

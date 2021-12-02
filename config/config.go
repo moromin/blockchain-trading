@@ -9,11 +9,13 @@ import (
 )
 
 type EnvConfig struct {
-	BfKey       string
-	BfSecret    string
-	CwKey       string
-	CwSecret    string
-	ProductCode string
+	BfKey         string
+	BfSecret      string
+	CwKey         string
+	CwSecret      string
+	BinanceKey    string
+	BinanceSecret string
+	ProductCode   string
 }
 
 var Env EnvConfig
@@ -24,10 +26,12 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 	Env = EnvConfig{
-		BfKey:       os.Getenv("BF_API_KEY"),
-		BfSecret:    os.Getenv("BF_API_SECRET"),
-		CwKey:       os.Getenv("CW_API_KEY"),
-		CwSecret:    os.Getenv("CW_API_SECRET"),
-		ProductCode: os.Getenv("PRODUCT_CODE"),
+		BfKey:         os.Getenv("BF_API_KEY"),
+		BfSecret:      os.Getenv("BF_API_SECRET"),
+		CwKey:         os.Getenv("CW_API_KEY"),
+		CwSecret:      os.Getenv("CW_API_SECRET"),
+		BinanceKey:    os.Getenv("BINANCE_API_KEY"),
+		BinanceSecret: os.Getenv("BINANCE_API_SECRET"),
+		ProductCode:   os.Getenv("PRODUCT_CODE"),
 	}
 }
