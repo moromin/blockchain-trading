@@ -41,7 +41,7 @@ func main() {
 	// 	return
 	// }
 
-	// Confirm ohlc data
+	// Setup binance API client
 	baseURL, err := url.Parse(exchange.BinanceURL)
 	if err != nil {
 		panic(err)
@@ -55,16 +55,11 @@ func main() {
 		},
 	}
 
-	container, err := di.New(target)
+	container, err := di.NewAPIClient(target)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
-	// query := map[string]string{
-	// 	"symbol":   "BTCUSDT",
-	// 	"interval": exchange.Interval1m,
-	// }
 
 	var currencies []entity.Currency
 	if err := container.Invoke(func(d *presenter.ExchangePresenter) {
@@ -73,19 +68,20 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		// spew.Dump(currencies)
 	}); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// fmt.Println("id, coin, name")
-	// for i, data := range currencies {
-	// 	fmt.Println(i, data.Coin, data.Name)
-	// }
+	// Show all currencies from binance API
+	fmt.Println("id, coin, name")
+	for i, data := range currencies {
+		fmt.Println(i, data.Coin, data.Name)
+	}
 
 	// Confirm DB
-	conn, err := sql.Open("postgres", "user=root password=secret host=localhost dbname=ohlc sslmode=disable")
+	driverName, dataSourceName := config.SetDBConfig()
+	conn, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		panic(err)
 	}
@@ -101,7 +97,6 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		// dbp.ShowCurrencies()
 	}); err != nil {
 		panic(err)
 	}
