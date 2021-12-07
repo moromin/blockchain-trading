@@ -13,7 +13,7 @@ import (
 	"go.uber.org/dig"
 )
 
-func New(target infrastructure.Target) (*dig.Container, error) {
+func NewAPIClient(target infrastructure.Target) (*dig.Container, error) {
 	c := dig.New()
 
 	// exchange
