@@ -1,14 +1,18 @@
 package database_test
 
 import (
-	"blockchain-trading/infrastructure"
+	"blockchain-trading/entity"
 	"blockchain-trading/interfaces/database"
+	"blockchain-trading/usecase"
+	"blockchain-trading/util"
+	"context"
 	"database/sql"
 	"log"
 	"os"
 	"testing"
 
 	_ "github.com/lib/pq"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -16,38 +20,40 @@ const (
 	dbSource = "user=root password=secret host=localhost dbname=ohlc sslmode=disable"
 )
 
-var repo *database.DatabaseRepository
+var testQueries *database.Queries
+var testDB *sql.DB
 
-// func TestStoreCurrency(t *testing.T) {
-// 	currencies := []entity.Currency{
-// 		{
-// 			Coin: "Hoge",
-// 			Name: "hogehoge",
-// 		},
-// 		{
-// 			Coin: "Fuga",
-// 			Name: "fugafuga",
-// 		},
-// 	}
+func createRandomCurrency(t *testing.T) entity.Currency {
+	arg := usecase.ResisterCurrencyParams{
+		Coin: util.RandomCoin(),
+		Name: util.RandomName(),
+	}
 
-// 	err := repo.StoreCurrency(currencies)
-// 	require.NoError(t, err)
-// }
+	currency, err := testQueries.ResisterCurrency(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, currency)
 
-// func TestFindAllCurrency(t *testing.T) {
-// 	currencies, err := repo.FindAllCurrency()
-// 	require.NoError(t, err)
-// 	require.NotEmpty(t, currencies)
-// }
+	require.Equal(t, arg.Coin, currency.Coin)
+	require.Equal(t, arg.Name, currency.Name)
+
+	require.NotZero(t, currency.ID)
+
+	return currency
+}
+
+func TestResisterCurrency(t *testing.T) {
+	createRandomCurrency(t)
+}
 
 func TestMain(m *testing.M) {
-	conn, err := sql.Open(dbDriver, dbSource)
+	var err error
+
+	testDB, err = sql.Open(dbDriver, dbSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	handler := infrastructure.SqlHandler{Conn: conn}
-	repo = &database.DatabaseRepository{SqlHandler: &handler}
+	testQueries = &database.Queries{Db: testDB}
 
 	os.Exit(m.Run())
 }
