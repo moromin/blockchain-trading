@@ -30,4 +30,8 @@ migrateup:
 migratedown:
 	migrate -path $(MIGRATION_PATH) -database "postgresql://root:secret@localhost:5432/ohlc?sslmode=disable" -verbose down
 
-.PHONY:	patch init-db create-db drop-db clean-db
+sqlc:
+	sqlc generate
+
+
+.PHONY:	patch init-db restart-db create-db drop-db clean-db migrateup migratedown sqlc
