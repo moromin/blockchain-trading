@@ -7,6 +7,7 @@ import (
 	"blockchain-trading/interfaces/exchange"
 	"blockchain-trading/interfaces/presenter"
 	"blockchain-trading/usecase"
+	"database/sql"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -78,6 +79,36 @@ func NewDB(handler infrastructure.SqlHandler) (*dig.Container, error) {
 
 	if err := c.Provide(func() database.SqlHandler {
 		return &handler
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return c, nil
+}
+
+func NewSqlc(db *sql.DB) (*dig.Container, error) {
+	c := dig.New()
+
+	if err := c.Provide(func(si *usecase.SqlcInteractor) *presenter.SqlcPresenter {
+		return &presenter.SqlcPresenter{Interactor: si}
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if err := c.Provide(func(q *database.Queries) *usecase.SqlcInteractor {
+		return &usecase.SqlcInteractor{Querier: q}
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if err := c.Provide(func(db database.DBTX) *database.Queries {
+		return &database.Queries{Db: db}
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if err := c.Provide(func() database.DBTX {
+		return db
 	}); err != nil {
 		return nil, errors.WithStack(err)
 	}
