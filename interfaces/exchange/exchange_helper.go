@@ -43,10 +43,11 @@ const (
 type Endpoint string
 
 const (
-	GetBalance Endpoint = "v1/me/getbalance"
-	GetTicker  Endpoint = "v1/ticker"
-	SendOrder  Endpoint = "v1/me/sendchildorder"
-	GetOHLC    Endpoint = "/api/v3/klines"
+	GetBalance               Endpoint = "v1/me/getbalance"
+	GetTicker                Endpoint = "v1/ticker"
+	SendOrder                Endpoint = "v1/me/sendchildorder"
+	GetOHLC                  Endpoint = "/api/v3/klines"
+	GetAllCurrencyInfomation Endpoint = "/sapi/v1/capital/config/getall"
 )
 
 func (e Endpoint) String() string {
@@ -55,7 +56,7 @@ func (e Endpoint) String() string {
 
 func (e Endpoint) Method() string {
 	switch e {
-	case GetBalance, GetTicker, GetOHLC:
+	case GetBalance, GetTicker, GetOHLC, GetAllCurrencyInfomation:
 		return "GET"
 	case SendOrder:
 		return "POST"
@@ -68,6 +69,15 @@ func (e Endpoint) Header(body []byte) map[string]string {
 	switch e {
 	case GetBalance, SendOrder:
 		return getBitFlyerPrivateHeader(e.Method(), e.String(), body)
+	default:
+		return nil
+	}
+}
+
+func (e Endpoint) Query(body []byte) map[string]string {
+	switch e {
+	case GetAllCurrencyInfomation:
+		return getBinancePrivateQuery(body)
 	default:
 		return nil
 	}
@@ -93,21 +103,17 @@ func getBitFlyerPrivateHeader(method, urlPath string, body []byte) map[string]st
 }
 
 // TODO: Update private header bitFlyer to binance.
-func getBinancePrivateHeader(method, urlPath string, body []byte) map[string]string {
-	u, err := url.Parse(BinanceURL + urlPath)
-	if err != nil {
-		panic(err)
-	}
-	endpoint := u.RequestURI()
-	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-	message := timestamp + method + endpoint + string(body)
-
-	mac := hmac.New(sha256.New, []byte(config.Env.BfSecret))
+func getBinancePrivateQuery(body []byte) map[string]string {
+	// recvWindow := 1000
+	timestamp := strconv.FormatInt(time.Now().Unix()*1000+1000, 10)
+	mac := hmac.New(sha256.New, []byte(config.Env.BinanceSecret))
+	message := "recvWindow=1000&" + "timestamp=" + timestamp + string(body)
 	mac.Write([]byte(message))
+	// mac.Write(body)
 	sign := hex.EncodeToString(mac.Sum(nil))
 	return map[string]string{
-		"ACCESS-KEY":       config.Env.BfKey,
-		"ACCESS-TIMESTAMP": timestamp,
-		"ACCESS-SIGN":      sign,
+		"recvWindow": "1000",
+		"timestamp":  timestamp,
+		"signature":  sign,
 	}
 }

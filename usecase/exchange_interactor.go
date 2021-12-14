@@ -55,3 +55,8 @@ func (di *ExchangeInteractor) ConfirmOHLC(query map[string]string) (ohlcs []enti
 	ohlcs, err = di.ExchangeRepository.GetOHLC(query)
 	return
 }
+
+func (di *ExchangeInteractor) ConfirmAllCurrencyInfomation() (currencies []entity.Currency, err error) {
+	currencies, err = di.ExchangeRepository.GetAllCurrencyInfomation()
+	return
+}

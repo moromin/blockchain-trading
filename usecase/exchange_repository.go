@@ -8,4 +8,5 @@ type ExchangeRepository interface {
 	GetRealTimeTicker(symbol string, ch chan<- entity.Ticker)
 	SendOrder(orderData *entity.OrderData) (*entity.Order, error)
 	GetOHLC(query map[string]string) ([]entity.OHLC, error)
+	GetAllCurrencyInfomation() ([]entity.Currency, error)
 }

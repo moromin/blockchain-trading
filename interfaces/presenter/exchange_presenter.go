@@ -1,6 +1,7 @@
 package presenter
 
 import (
+	"blockchain-trading/entity"
 	"blockchain-trading/usecase"
 	"fmt"
 
@@ -27,4 +28,12 @@ func (dp *ExchangePresenter) ShowOHLC(query map[string]string) {
 		return
 	}
 	spew.Dump(ohlcs)
+}
+
+func (dp *ExchangePresenter) GetAllCurrency() ([]entity.Currency, error) {
+	currencies, err := dp.Interactor.ConfirmAllCurrencyInfomation()
+	if err != nil {
+		return nil, err
+	}
+	return currencies, nil
 }

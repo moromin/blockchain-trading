@@ -16,6 +16,12 @@ type EnvConfig struct {
 	BinanceKey    string
 	BinanceSecret string
 	ProductCode   string
+	DBDriver      string
+	DBUser        string
+	DBPassword    string
+	DBHost        string
+	DBName        string
+	DBSSLMode     string
 }
 
 var Env EnvConfig
@@ -33,5 +39,17 @@ func init() {
 		BinanceKey:    os.Getenv("BINANCE_API_KEY"),
 		BinanceSecret: os.Getenv("BINANCE_API_SECRET"),
 		ProductCode:   os.Getenv("PRODUCT_CODE"),
+		DBDriver:      os.Getenv("DBDriver"),
+		DBUser:        os.Getenv("DBUser"),
+		DBPassword:    os.Getenv("DBPassword"),
+		DBHost:        os.Getenv("DBHost"),
+		DBName:        os.Getenv("DBName"),
+		DBSSLMode:     os.Getenv("DBSSLMode"),
 	}
+}
+
+func SetDBConfig() (driverName, dataSourceName string) {
+	driverName = Env.DBDriver
+	dataSourceName = fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s", Env.DBUser, Env.DBPassword, Env.DBHost, Env.DBName, Env.DBSSLMode)
+	return
 }
