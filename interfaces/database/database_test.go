@@ -20,7 +20,7 @@ const (
 	dbSource = "user=root password=secret host=localhost dbname=ohlc sslmode=disable"
 )
 
-var testQueries *database.Queries
+var testRepo *database.DatabaseRepository
 var testDB *sql.DB
 
 func createRandomCurrency(t *testing.T) entity.Currency {
@@ -29,7 +29,7 @@ func createRandomCurrency(t *testing.T) entity.Currency {
 		Name: util.RandomName(),
 	}
 
-	currency, err := testQueries.ResisterCurrency(context.Background(), arg)
+	currency, err := testRepo.ResisterCurrency(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, currency)
 
@@ -47,7 +47,7 @@ func TestResisterCurrency(t *testing.T) {
 
 func TestGetCurrency(t *testing.T) {
 	currency1 := createRandomCurrency(t)
-	currency2, err := testQueries.GetCurrency(context.Background(), currency1.Coin)
+	currency2, err := testRepo.GetCurrency(context.Background(), currency1.Coin)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, currency2)
@@ -63,7 +63,7 @@ func TestListCurrencies(t *testing.T) {
 		Offset: 5,
 	}
 
-	currencies, err := testQueries.ListCurrencies(context.Background(), arg)
+	currencies, err := testRepo.ListCurrencies(context.Background(), arg)
 
 	require.NoError(t, err)
 	require.Len(t, currencies, 10)
@@ -81,7 +81,7 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	testQueries = &database.Queries{Db: testDB}
+	testRepo = &database.DatabaseRepository{Db: testDB}
 
 	os.Exit(m.Run())
 }

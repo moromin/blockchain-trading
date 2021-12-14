@@ -1,23 +1,25 @@
 package usecase
 
-import "blockchain-trading/entity"
+import (
+	"blockchain-trading/entity"
+	"context"
+)
 
 type DatabaseInteractor struct {
-	DatabaseRepository DatabaseRepository
+	DbRepo DatabaseRepository
 }
 
-func (di *DatabaseInteractor) Add(currencies []entity.Currency) error {
-	err := di.DatabaseRepository.StoreCurrency(currencies)
-	if err != nil {
-		return err
-	}
-	return nil
+func (di *DatabaseInteractor) AddCurrency(ctx context.Context, arg ResisterCurrencyParams) (entity.Currency, error) {
+	currency, err := di.DbRepo.ResisterCurrency(ctx, arg)
+	return currency, err
 }
 
-func (di *DatabaseInteractor) Currencies() ([]entity.Currency, error) {
-	currencies, err := di.DatabaseRepository.FindAllCurrency()
-	if err != nil {
-		return nil, err
-	}
-	return currencies, nil
+func (di *DatabaseInteractor) FindCurrency(ctx context.Context, coin string) (entity.Currency, error) {
+	currency, err := di.DbRepo.GetCurrency(context.Background(), coin)
+	return currency, err
+}
+
+func (di *DatabaseInteractor) FindCurrencies(ctx context.Context, arg ListCurrenciesParams) ([]entity.Currency, error) {
+	currencies, err := di.DbRepo.ListCurrencies(context.Background(), arg)
+	return currencies, err
 }

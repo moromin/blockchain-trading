@@ -55,54 +55,23 @@ func NewAPIClient(target infrastructure.Target) (*dig.Container, error) {
 	return c, nil
 }
 
-func NewDB(handler infrastructure.SqlHandler) (*dig.Container, error) {
+func NewDB(db *sql.DB) (*dig.Container, error) {
 	c := dig.New()
 
-	// sql handler
-	if err := c.Provide(func(dbi *usecase.DatabaseInteractor) *presenter.DatabasePresenter {
-		return &presenter.DatabasePresenter{Interactor: dbi}
+	if err := c.Provide(func(si *usecase.DatabaseInteractor) *presenter.DatabasePresenter {
+		return &presenter.DatabasePresenter{Interactor: si}
 	}); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	if err := c.Provide(func(dbRepo *database.DatabaseRepository) *usecase.DatabaseInteractor {
-		return &usecase.DatabaseInteractor{DatabaseRepository: dbRepo}
+	if err := c.Provide(func(dr *database.DatabaseRepository) *usecase.DatabaseInteractor {
+		return &usecase.DatabaseInteractor{DbRepo: dr}
 	}); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	if err := c.Provide(func(sh database.SqlHandler) *database.DatabaseRepository {
-		return &database.DatabaseRepository{SqlHandler: sh}
-	}); err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if err := c.Provide(func() database.SqlHandler {
-		return &handler
-	}); err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	return c, nil
-}
-
-func NewSqlc(db *sql.DB) (*dig.Container, error) {
-	c := dig.New()
-
-	if err := c.Provide(func(si *usecase.SqlcInteractor) *presenter.SqlcPresenter {
-		return &presenter.SqlcPresenter{Interactor: si}
-	}); err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if err := c.Provide(func(q *database.Queries) *usecase.SqlcInteractor {
-		return &usecase.SqlcInteractor{Querier: q}
-	}); err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if err := c.Provide(func(db database.DBTX) *database.Queries {
-		return &database.Queries{Db: db}
+	if err := c.Provide(func(db database.DBTX) *database.DatabaseRepository {
+		return &database.DatabaseRepository{Db: db}
 	}); err != nil {
 		return nil, errors.WithStack(err)
 	}

@@ -2,51 +2,68 @@ package database
 
 import (
 	"blockchain-trading/entity"
-	"fmt"
-
-	"github.com/pkg/errors"
+	"blockchain-trading/usecase"
+	"context"
 )
 
 type DatabaseRepository struct {
-	SqlHandler SqlHandler
+	Db DBTX
 }
 
-func (dr *DatabaseRepository) StoreCurrency(currencies []entity.Currency) error {
-	for id, currency := range currencies {
-		_, err := dr.SqlHandler.Execute("INSERT INTO currencies (coin, name) VALUES ($1, $2)", currency.Coin, currency.Name)
-		if err != nil {
-			fmt.Println(id, "failed ")
-			return errors.Wrap(err, "Insert currency")
-		}
-	}
-	return nil
+const getCurrency = `-- name: GetCurrency :one
+SELECT id, coin, name FROM currencies
+WHERE coin = $1 LIMIT 1
+`
+
+func (dr *DatabaseRepository) GetCurrency(ctx context.Context, coin string) (entity.Currency, error) {
+	row := dr.Db.QueryRowContext(ctx, getCurrency, coin)
+	var i entity.Currency
+	err := row.Scan(&i.ID, &i.Coin, &i.Name)
+	return i, err
 }
 
-func (dr *DatabaseRepository) FindAllCurrency() ([]entity.Currency, error) {
-	rows, err := dr.SqlHandler.Query("SELECT * FROM currencies")
-	defer func() {
-		err = rows.Close()
-		if err != nil {
-			err = errors.Wrap(err, "Close row")
-		}
-	}()
+const listCurrencies = `-- name: ListCurrencies :many
+SELECT id, coin, name FROM currencies
+ORDER BY id
+LIMIT $1
+OFFSET $2
+`
+
+func (dr *DatabaseRepository) ListCurrencies(ctx context.Context, arg usecase.ListCurrenciesParams) ([]entity.Currency, error) {
+	rows, err := dr.Db.QueryContext(ctx, listCurrencies, arg.Limit, arg.Offset)
 	if err != nil {
-		return nil, errors.Wrap(err, "Find all currency")
+		return nil, err
 	}
-	var currencies []entity.Currency
+	defer rows.Close()
+	items := []entity.Currency{}
 	for rows.Next() {
-		var id int
-		var coin string
-		var name string
-		if err := rows.Scan(&id, &coin, &name); err != nil {
-			continue
+		var i entity.Currency
+		if err := rows.Scan(&i.ID, &i.Coin, &i.Name); err != nil {
+			return nil, err
 		}
-		currency := entity.Currency{
-			ID:   id,
-			Coin: coin,
-			Name: name,
-		}
-		currencies = append(currencies, currency)
+		items = append(items, i)
 	}
-	return currencies, err
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const resisterCurrency = `-- name: ResisterCurrency :one
+INSERT INTO currencies (
+  coin,
+  name
+) VALUES (
+  $1, $2
+) RETURNING id, coin, name
+`
+
+func (dr *DatabaseRepository) ResisterCurrency(ctx context.Context, arg usecase.ResisterCurrencyParams) (entity.Currency, error) {
+	row := dr.Db.QueryRowContext(ctx, resisterCurrency, arg.Coin, arg.Name)
+	var i entity.Currency
+	err := row.Scan(&i.ID, &i.Coin, &i.Name)
+	return i, err
 }

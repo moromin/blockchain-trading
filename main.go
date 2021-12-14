@@ -90,12 +90,12 @@ func main() {
 		panic(err)
 	}
 
-	container, err := di.NewSqlc(conn)
+	container, err := di.NewDB(conn)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := container.Invoke(func(sp *presenter.SqlcPresenter) {
+	if err := container.Invoke(func(dp *presenter.DatabasePresenter) {
 		// Resister new currency.
 		// err = sp.RegisterCurrencies(currencies)
 		// if err != nil {
@@ -104,14 +104,14 @@ func main() {
 
 		// Confirm currency specified by coin.
 		fmt.Println("----- ShowCurrency() -----")
-		err = sp.ShowCurrency("BTC")
+		err = dp.ShowCurrency("BTC")
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		// Confirm all currencies specified by limit and offset.
 		fmt.Println("----- ShowCurrencies() -----")
-		err = sp.ShowCurrencies(usecase.ListCurrenciesParams{
+		err = dp.ShowCurrencies(usecase.ListCurrenciesParams{
 			Limit:  20,
 			Offset: 0,
 		})
