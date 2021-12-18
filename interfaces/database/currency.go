@@ -1,14 +1,13 @@
-package currency
+package database
 
 import (
 	"blockchain-trading/entity"
-	"blockchain-trading/interfaces/database"
 	"blockchain-trading/usecase"
 	"context"
 )
 
 type CurrencyRepository struct {
-	Db database.DBTX
+	Db DBTX
 }
 
 const getCurrency = `-- name: GetCurrency :one
