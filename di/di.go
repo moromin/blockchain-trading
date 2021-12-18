@@ -55,23 +55,23 @@ func NewAPIClient(target infrastructure.Target) (*dig.Container, error) {
 	return c, nil
 }
 
-func NewDB(db *sql.DB) (*dig.Container, error) {
+func NewCurrency(db *sql.DB) (*dig.Container, error) {
 	c := dig.New()
 
-	if err := c.Provide(func(si *usecase.DatabaseInteractor) *presenter.DatabasePresenter {
-		return &presenter.DatabasePresenter{Interactor: si}
+	if err := c.Provide(func(ci *usecase.CurrencyInteractor) *presenter.CurrencyPresenter {
+		return &presenter.CurrencyPresenter{Interactor: ci}
 	}); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	if err := c.Provide(func(dr *database.DatabaseRepository) *usecase.DatabaseInteractor {
-		return &usecase.DatabaseInteractor{DbRepo: dr}
+	if err := c.Provide(func(cr *database.CurrencyRepository) *usecase.CurrencyInteractor {
+		return &usecase.CurrencyInteractor{Repo: cr}
 	}); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	if err := c.Provide(func(db database.DBTX) *database.DatabaseRepository {
-		return &database.DatabaseRepository{Db: db}
+	if err := c.Provide(func(db database.DBTX) *database.CurrencyRepository {
+		return &database.CurrencyRepository{Db: db}
 	}); err != nil {
 		return nil, errors.WithStack(err)
 	}

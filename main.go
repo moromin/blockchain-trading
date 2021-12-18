@@ -84,18 +84,19 @@ func main() {
 	// 		Name: "konishi",
 	// 	},
 	// }
+
 	driverName, dataSourceName := config.SetDBConfig()
 	conn, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		panic(err)
 	}
 
-	container, err := di.NewDB(conn)
+	container, err := di.NewCurrency(conn)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := container.Invoke(func(dp *presenter.DatabasePresenter) {
+	if err := container.Invoke(func(dp *presenter.CurrencyPresenter) {
 		// Resister new currency.
 		// err = sp.RegisterCurrencies(currencies)
 		// if err != nil {
