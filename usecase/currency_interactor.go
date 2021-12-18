@@ -9,17 +9,17 @@ type CurrencyInteractor struct {
 	Repo CurrencyRepository
 }
 
-func (di *CurrencyInteractor) AddCurrency(ctx context.Context, arg ResisterCurrencyParams) (entity.Currency, error) {
-	currency, err := di.Repo.RegisterCurrency(ctx, arg)
+func (ci *CurrencyInteractor) AddCurrency(ctx context.Context, arg ResisterCurrencyParams) (entity.Currency, error) {
+	currency, err := ci.Repo.RegisterCurrency(ctx, arg)
 	return currency, err
 }
 
-func (di *CurrencyInteractor) FindCurrency(ctx context.Context, coin string) (entity.Currency, error) {
-	currency, err := di.Repo.GetCurrency(context.Background(), coin)
+func (ci *CurrencyInteractor) FindCurrency(ctx context.Context, coin string) (entity.Currency, error) {
+	currency, err := ci.Repo.GetCurrency(context.Background(), coin)
 	return currency, err
 }
 
-func (di *CurrencyInteractor) FindCurrencies(ctx context.Context, arg ListCurrenciesParams) ([]entity.Currency, error) {
-	currencies, err := di.Repo.ListCurrencies(context.Background(), arg)
+func (ci *CurrencyInteractor) FindCurrencies(ctx context.Context, arg ListCurrenciesParams) ([]entity.Currency, error) {
+	currencies, err := ci.Repo.ListCurrencies(context.Background(), arg)
 	return currencies, err
 }

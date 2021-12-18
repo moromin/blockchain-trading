@@ -15,8 +15,8 @@ SELECT * FROM currencies
 WHERE coin = $1
 `
 
-func (dr *CurrencyRepository) GetCurrency(ctx context.Context, coin string) (entity.Currency, error) {
-	row := dr.Db.QueryRowContext(ctx, getCurrency, coin)
+func (cr *CurrencyRepository) GetCurrency(ctx context.Context, coin string) (entity.Currency, error) {
+	row := cr.Db.QueryRowContext(ctx, getCurrency, coin)
 	var i entity.Currency
 	err := row.Scan(&i.ID, &i.Coin, &i.Name)
 	return i, err
@@ -29,8 +29,8 @@ LIMIT $1
 OFFSET $2
 `
 
-func (dr *CurrencyRepository) ListCurrencies(ctx context.Context, arg usecase.ListCurrenciesParams) ([]entity.Currency, error) {
-	rows, err := dr.Db.QueryContext(ctx, listCurrencies, arg.Limit, arg.Offset)
+func (cr *CurrencyRepository) ListCurrencies(ctx context.Context, arg usecase.ListCurrenciesParams) ([]entity.Currency, error) {
+	rows, err := cr.Db.QueryContext(ctx, listCurrencies, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -61,8 +61,8 @@ INSERT INTO currencies (
 ) RETURNING *
 `
 
-func (dr *CurrencyRepository) RegisterCurrency(ctx context.Context, arg usecase.ResisterCurrencyParams) (entity.Currency, error) {
-	row := dr.Db.QueryRowContext(ctx, resisterCurrency, arg.Coin, arg.Name)
+func (cr *CurrencyRepository) RegisterCurrency(ctx context.Context, arg usecase.ResisterCurrencyParams) (entity.Currency, error) {
+	row := cr.Db.QueryRowContext(ctx, resisterCurrency, arg.Coin, arg.Name)
 	var i entity.Currency
 	err := row.Scan(&i.ID, &i.Coin, &i.Name)
 	return i, err
