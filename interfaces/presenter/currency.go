@@ -7,17 +7,17 @@ import (
 	"fmt"
 )
 
-type DatabasePresenter struct {
-	Interactor *usecase.DatabaseInteractor
+type CurrencyPresenter struct {
+	Interactor *usecase.CurrencyInteractor
 }
 
-func (dp *DatabasePresenter) RegisterCurrencies(currencies []entity.Currency) error {
+func (cp *CurrencyPresenter) RegisterCurrencies(currencies []entity.Currency) error {
 	for _, currency := range currencies {
 		arg := usecase.ResisterCurrencyParams{
 			Coin: currency.Coin,
 			Name: currency.Name,
 		}
-		_, err := dp.Interactor.AddCurrency(context.Background(), arg)
+		_, err := cp.Interactor.AddCurrency(context.Background(), arg)
 		if err != nil {
 			return err
 		}
@@ -25,8 +25,8 @@ func (dp *DatabasePresenter) RegisterCurrencies(currencies []entity.Currency) er
 	return nil
 }
 
-func (dp *DatabasePresenter) ShowCurrency(coin string) error {
-	currency, err := dp.Interactor.FindCurrency(context.Background(), coin)
+func (cp *CurrencyPresenter) ShowCurrency(coin string) error {
+	currency, err := cp.Interactor.FindCurrency(context.Background(), coin)
 	if err != nil {
 		return err
 	}
@@ -35,8 +35,8 @@ func (dp *DatabasePresenter) ShowCurrency(coin string) error {
 	return nil
 }
 
-func (dp *DatabasePresenter) ShowCurrencies(arg usecase.ListCurrenciesParams) error {
-	currencies, err := dp.Interactor.FindCurrencies(context.Background(), arg)
+func (cp *CurrencyPresenter) ShowCurrencies(arg usecase.ListCurrenciesParams) error {
+	currencies, err := cp.Interactor.FindCurrencies(context.Background(), arg)
 	if err != nil {
 		return err
 	}
