@@ -25,16 +25,6 @@ func (cp *CurrencyPresenter) RegisterCurrencies(currencies []entity.Currency) er
 	return nil
 }
 
-func (cp *CurrencyPresenter) ShowCurrency(coin string) error {
-	currency, err := cp.Interactor.FindCurrency(context.Background(), coin)
-	if err != nil {
-		return err
-	}
-	fmt.Println("id, coin, name")
-	fmt.Printf("%d, %s, %s\n", currency.ID, currency.Coin, currency.Name)
-	return nil
-}
-
 func (cp *CurrencyPresenter) ShowCurrencies(arg usecase.ListCurrenciesParams) error {
 	currencies, err := cp.Interactor.FindCurrencies(context.Background(), arg)
 	if err != nil {

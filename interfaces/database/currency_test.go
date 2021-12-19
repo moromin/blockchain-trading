@@ -45,18 +45,6 @@ func TestResisterCurrency(t *testing.T) {
 	createRandomCurrency(t)
 }
 
-func TestGetCurrency(t *testing.T) {
-	currency1 := createRandomCurrency(t)
-	currency2, err := testRepo.GetCurrency(context.Background(), currency1.Coin)
-
-	require.NoError(t, err)
-	require.NotEmpty(t, currency2)
-
-	require.Equal(t, currency1.ID, currency2.ID)
-	require.Equal(t, currency1.Coin, currency2.Coin)
-	require.Equal(t, currency1.Name, currency2.Name)
-}
-
 func TestListCurrencies(t *testing.T) {
 	arg := usecase.ListCurrenciesParams{
 		Limit:  10,

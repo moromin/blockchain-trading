@@ -16,7 +16,6 @@ type ResisterCurrencyParams struct {
 }
 
 type CurrencyRepository interface {
-	GetCurrency(ctx context.Context, coin string) (entity.Currency, error)
 	ListCurrencies(ctx context.Context, arg ListCurrenciesParams) ([]entity.Currency, error)
 	RegisterCurrency(ctx context.Context, arg ResisterCurrencyParams) (entity.Currency, error)
 }

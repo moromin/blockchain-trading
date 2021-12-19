@@ -10,18 +10,6 @@ type CurrencyRepository struct {
 	Db DBTX
 }
 
-const getCurrency = `-- name: GetCurrency :one
-SELECT * FROM currencies
-WHERE coin = $1
-`
-
-func (cr *CurrencyRepository) GetCurrency(ctx context.Context, coin string) (entity.Currency, error) {
-	row := cr.Db.QueryRowContext(ctx, getCurrency, coin)
-	var i entity.Currency
-	err := row.Scan(&i.ID, &i.Coin, &i.Name)
-	return i, err
-}
-
 const listCurrencies = `-- name: ListCurrencies :many
 SELECT * FROM currencies
 ORDER BY id

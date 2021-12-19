@@ -14,11 +14,6 @@ func (ci *CurrencyInteractor) AddCurrency(ctx context.Context, arg ResisterCurre
 	return currency, err
 }
 
-func (ci *CurrencyInteractor) FindCurrency(ctx context.Context, coin string) (entity.Currency, error) {
-	currency, err := ci.Repo.GetCurrency(context.Background(), coin)
-	return currency, err
-}
-
 func (ci *CurrencyInteractor) FindCurrencies(ctx context.Context, arg ListCurrenciesParams) ([]entity.Currency, error) {
 	currencies, err := ci.Repo.ListCurrencies(context.Background(), arg)
 	return currencies, err

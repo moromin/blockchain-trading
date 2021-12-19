@@ -103,13 +103,6 @@ func main() {
 		// 	log.Fatal(err)
 		// }
 
-		// Confirm currency specified by coin.
-		fmt.Println("----- ShowCurrency() -----")
-		err = dp.ShowCurrency("BTC")
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		// Confirm all currencies specified by limit and offset.
 		fmt.Println("----- ShowCurrencies() -----")
 		err = dp.ShowCurrencies(usecase.ListCurrenciesParams{
