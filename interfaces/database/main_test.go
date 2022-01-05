@@ -2,30 +2,34 @@ package database_test
 
 import (
 	"blockchain-trading/interfaces/database"
-	"database/sql"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/DATA-DOG/go-sqlmock"
 )
 
-const (
-	dbDriver = "postgres"
-	dbSource = "user=root password=secret host=localhost dbname=ohlc sslmode=disable"
-)
+// const (
+// 	dbDriver = "postgres"
+// 	dbSource = "user=root password=secret host=localhost dbname=ohlc sslmode=disable"
+// )
 
-var testRepo *database.CurrencyRepository
-var testDB *sql.DB
+type TestRepository struct {
+	repo *database.CurrencyRepository
+	mock sqlmock.Sqlmock
+}
+
+var testRepo TestRepository
 
 func TestMain(m *testing.M) {
-	var err error
-
-	testDB, err = sql.Open(dbDriver, dbSource)
+	db, mock, err := sqlmock.New()
 	if err != nil {
-		log.Fatal("cannot connect to db:", err)
+		log.Fatal("failed to init db mock:", err)
 	}
-	defer testDB.Close()
+	defer db.Close()
 
-	testRepo = &database.CurrencyRepository{Db: testDB}
+	repo := &database.CurrencyRepository{Db: db}
+	testRepo = TestRepository{repo: repo, mock: mock}
 
 	os.Exit(m.Run())
 }
