@@ -40,7 +40,7 @@ func (cr *CurrencyRepository) ListCurrencies(ctx context.Context, arg usecase.Li
 	return items, nil
 }
 
-const ResisterCurrency = `-- name: ResisterCurrency :one
+const RegisterCurrency = `-- name: RegisterCurrency :one
 INSERT INTO currencies (
   coin,
   name
@@ -50,7 +50,7 @@ INSERT INTO currencies (
 `
 
 func (cr *CurrencyRepository) RegisterCurrency(ctx context.Context, arg usecase.ResisterCurrencyParams) (entity.Currency, error) {
-	row := cr.Db.QueryRowContext(ctx, ResisterCurrency, arg.Coin, arg.Name)
+	row := cr.Db.QueryRowContext(ctx, RegisterCurrency, arg.Coin, arg.Name)
 	var i entity.Currency
 	err := row.Scan(&i.ID, &i.Coin, &i.Name)
 	return i, err
