@@ -10,7 +10,7 @@ type CurrencyRepository struct {
 	Db DBTX
 }
 
-const listCurrencies = `-- name: ListCurrencies :many
+const ListCurrencies = `-- name: ListCurrencies :many
 SELECT * FROM currencies
 ORDER BY id
 LIMIT $1
@@ -18,7 +18,7 @@ OFFSET $2
 `
 
 func (cr *CurrencyRepository) ListCurrencies(ctx context.Context, arg usecase.ListCurrenciesParams) ([]entity.Currency, error) {
-	rows, err := cr.Db.QueryContext(ctx, listCurrencies, arg.Limit, arg.Offset)
+	rows, err := cr.Db.QueryContext(ctx, ListCurrencies, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
