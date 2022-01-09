@@ -3,6 +3,7 @@ module blockchain-trading
 go 1.16
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/davecgh/go-spew v1.1.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/joho/godotenv v1.4.0

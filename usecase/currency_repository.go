@@ -15,8 +15,7 @@ type ResisterCurrencyParams struct {
 	Name string `json:"name"`
 }
 
-type Querier interface {
-	GetCurrency(ctx context.Context, coin string) (entity.Currency, error)
+type CurrencyRepository interface {
 	ListCurrencies(ctx context.Context, arg ListCurrenciesParams) ([]entity.Currency, error)
-	ResisterCurrency(ctx context.Context, arg ResisterCurrencyParams) (entity.Currency, error)
+	RegisterCurrency(ctx context.Context, arg ResisterCurrencyParams) (entity.Currency, error)
 }

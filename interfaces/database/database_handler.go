@@ -1,17 +1,13 @@
 package database
 
-type SqlHandler interface {
-	Execute(string, ...interface{}) (Result, error)
-	Query(string, ...interface{}) (Row, error)
-}
+import (
+	"context"
+	"database/sql"
+)
 
-type Result interface {
-	LastInsertId() (int64, error)
-	RowsAffected() (int64, error)
-}
-
-type Row interface {
-	Scan(...interface{}) error
-	Next() bool
-	Close() error
+type DBTX interface {
+	ExecContext(context.Context, string, ...interface{}) (sql.Result, error)
+	PrepareContext(context.Context, string) (*sql.Stmt, error)
+	QueryContext(context.Context, string, ...interface{}) (*sql.Rows, error)
+	QueryRowContext(context.Context, string, ...interface{}) *sql.Row
 }

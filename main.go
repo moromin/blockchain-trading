@@ -84,34 +84,28 @@ func main() {
 	// 		Name: "konishi",
 	// 	},
 	// }
+
 	driverName, dataSourceName := config.SetDBConfig()
 	conn, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		panic(err)
 	}
 
-	container, err := di.NewSqlc(conn)
+	container, err := di.NewCurrency(conn)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := container.Invoke(func(sp *presenter.SqlcPresenter) {
+	if err := container.Invoke(func(dp *presenter.CurrencyPresenter) {
 		// Resister new currency.
 		// err = sp.RegisterCurrencies(currencies)
 		// if err != nil {
 		// 	log.Fatal(err)
 		// }
 
-		// Confirm currency specified by coin.
-		fmt.Println("----- ShowCurrency() -----")
-		err = sp.ShowCurrency("BTC")
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		// Confirm all currencies specified by limit and offset.
 		fmt.Println("----- ShowCurrencies() -----")
-		err = sp.ShowCurrencies(usecase.ListCurrenciesParams{
+		err = dp.ShowCurrencies(usecase.ListCurrenciesParams{
 			Limit:  20,
 			Offset: 0,
 		})
