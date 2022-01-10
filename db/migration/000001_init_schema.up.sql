@@ -10,7 +10,7 @@ CREATE TABLE "ohlcs" (
   "volume" numeric NOT NULL,
   "closetime" timestamptz NOT NULL,
   "quote_asset_volume" numeric NOT NULL,
-  "numer_of_trades" bigint NOT NULL,
+  "number_of_trades" bigint NOT NULL,
   "taker_buy_base_asset_volume" numeric NOT NULL,
   "taker_buy_quote_asset_volume" numeric NOT NULL
 );
