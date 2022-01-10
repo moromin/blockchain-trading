@@ -143,6 +143,8 @@ func (er *ExchangeRepository) GetOHLC(query map[string]string) ([]entity.OHLC, e
 			panic(ok)
 		}
 
+		ohlcs[i].Symbol = query["symbol"]
+		ohlcs[i].Interval = query["interval"]
 		ohlcs[i].OpenTime = int64(data[0].(float64))
 		ohlcs[i].Open, _ = strconv.ParseFloat(data[1].(string), 64)
 		ohlcs[i].High, _ = strconv.ParseFloat(data[2].(string), 64)

@@ -1,6 +1,8 @@
 package entity
 
 type OHLC struct {
+	Symbol                   string
+	Interval                 string
 	OpenTime                 int64
 	Open                     float64
 	High                     float64
