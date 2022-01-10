@@ -1,5 +1,7 @@
 CREATE TABLE "ohlcs" (
   "id" bigserial PRIMARY KEY,
+  "symbol" varchar NOT NULL,
+  "interval" varchar NOT NULL,
   "opentime" timestamptz NOT NULL,
   "open" numeric NOT NULL,
   "high" numeric NOT NULL,
@@ -10,9 +12,7 @@ CREATE TABLE "ohlcs" (
   "quote_asset_volume" numeric NOT NULL,
   "numer_of_trades" bigint NOT NULL,
   "taker_buy_base_asset_volume" numeric NOT NULL,
-  "taker_buy_quote_asset_volume" numeric NOT NULL,
-  "symbol_id" bigint NOT NULL,
-  "interval_id" bigint NOT NULL
+  "taker_buy_quote_asset_volume" numeric NOT NULL
 );
 
 CREATE TABLE "symbols" (
@@ -33,9 +33,9 @@ CREATE TABLE "intervals" (
   "name" varchar UNIQUE NOT NULL
 );
 
-ALTER TABLE "ohlcs" ADD FOREIGN KEY ("symbol_id") REFERENCES "symbols" ("id");
+-- ALTER TABLE "ohlcs" ADD FOREIGN KEY ("symbol_id") REFERENCES "symbols" ("id");
 
-ALTER TABLE "ohlcs" ADD FOREIGN KEY ("interval_id") REFERENCES "intervals" ("id");
+-- ALTER TABLE "ohlcs" ADD FOREIGN KEY ("interval_id") REFERENCES "intervals" ("id");
 
 ALTER TABLE "symbols" ADD FOREIGN KEY ("base_id") REFERENCES "currencies" ("id");
 
