@@ -3,12 +3,14 @@ package main
 import (
 	"blockchain-trading/config"
 	"blockchain-trading/di"
+	"blockchain-trading/entity"
+	"blockchain-trading/infrastructure"
+	"blockchain-trading/interfaces/exchange"
 	"blockchain-trading/interfaces/presenter"
-	"blockchain-trading/usecase"
-	"database/sql"
 	"fmt"
-	"log"
+	"net/url"
 
+	"github.com/davecgh/go-spew/spew"
 	_ "github.com/lib/pq"
 )
 
@@ -27,108 +29,57 @@ func main() {
 	// 	},
 	// }
 
-	// container, err := di.New(target)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// if err := container.Invoke(func(e *presenter.ExchangePresenter) {
-	// 	e.ShowBalance()
-	// }); err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
 	// Setup binance API client
-	// baseURL, err := url.Parse(exchange.BinanceURL)
+	baseURL, err := url.Parse(exchange.BinanceURL)
+	if err != nil {
+		panic(err)
+	}
+
+	target := infrastructure.Target{
+		BaseURL: baseURL,
+		Header: map[string]string{
+			"X-MBX-APIKEY": config.Env.BinanceKey,
+			"Content-Type": "application/json",
+		},
+	}
+
+	container, err := di.NewAPIClient(target)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	query := map[string]string{
+		"symbol":   "BTCUSDT",
+		"interval": exchange.Interval1m,
+	}
+
+	var ohlcs []entity.OHLC
+	if err := container.Invoke(func(d *presenter.ExchangePresenter) {
+		ohlcs, err = d.GetOHLC(query)
+		if err != nil {
+			panic(err)
+		}
+	}); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	spew.Dump(ohlcs)
+
+	// driverName, dataSourceName := config.SetDBConfig()
+	// conn, err := sql.Open(driverName, dataSourceName)
 	// if err != nil {
 	// 	panic(err)
 	// }
 
-	// target := infrastructure.Target{
-	// 	BaseURL: baseURL,
-	// 	Header: map[string]string{
-	// 		"X-MBX-APIKEY": config.Env.BinanceKey,
-	// 		"Content-Type": "application/json",
-	// 	},
-	// }
-
-	// container, err := di.NewAPIClient(target)
+	// container, err := di.NewCurrency(conn)
 	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
+	// 	panic(err)
 	// }
 
-	// var currencies []entity.Currency
-	// if err := container.Invoke(func(d *presenter.ExchangePresenter) {
-	// 	currencies, err = d.GetAllCurrency()
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 		return
-	// 	}
-	// }); err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
+	// if err := container.Invoke(func(dp *presenter.CurrencyPresenter) {
 
-	// Show all currencies from binance API
-	// fmt.Println("id, coin, name")
-	// for i, data := range currencies {
-	// 	fmt.Println(i, data.Coin, data.Name)
-	// }
-
-	// Confirm DB
-	// currencies := []entity.Currency{
-	// 	{
-	// 		Coin: "kkk",
-	// 		Name: "konishi",
-	// 	},
-	// }
-
-	driverName, dataSourceName := config.SetDBConfig()
-	conn, err := sql.Open(driverName, dataSourceName)
-	if err != nil {
-		panic(err)
-	}
-
-	container, err := di.NewCurrency(conn)
-	if err != nil {
-		panic(err)
-	}
-
-	if err := container.Invoke(func(dp *presenter.CurrencyPresenter) {
-		// Resister new currency.
-		// err = sp.RegisterCurrencies(currencies)
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-
-		// Confirm all currencies specified by limit and offset.
-		fmt.Println("----- ShowCurrencies() -----")
-		err = dp.ShowCurrencies(usecase.ListCurrenciesParams{
-			Limit:  20,
-			Offset: 0,
-		})
-		if err != nil {
-			log.Fatal(err)
-		}
-
-	}); err != nil {
-		panic(err)
-	}
-
-	// handler := infrastructure.SqlHandler{Conn: conn}
-	// container, err = di.NewDB(handler)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
-	// if err := container.Invoke(func(dbp *presenter.DatabasePresenter) {
-	// 	err = dbp.RegisterCurrencies(currencies)
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 		return
-	// 	}
 	// }); err != nil {
 	// 	panic(err)
 	// }
