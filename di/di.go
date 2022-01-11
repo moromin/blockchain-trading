@@ -84,3 +84,33 @@ func NewCurrency(db *sql.DB) (*dig.Container, error) {
 
 	return c, nil
 }
+
+func NewOHLC(db *sql.DB) (*dig.Container, error) {
+	c := dig.New()
+
+	if err := c.Provide(func(oi *usecase.OHLCInteractor) *presenter.OHLCPresenter {
+		return &presenter.OHLCPresenter{Interactor: oi}
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if err := c.Provide(func(or *database.OHLCRepository) *usecase.OHLCInteractor {
+		return &usecase.OHLCInteractor{Repo: or}
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if err := c.Provide(func(db database.DBTX) *database.OHLCRepository {
+		return &database.OHLCRepository{Db: db}
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if err := c.Provide(func() database.DBTX {
+		return db
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return c, nil
+}
