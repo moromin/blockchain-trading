@@ -7,10 +7,12 @@ import (
 	"blockchain-trading/infrastructure"
 	"blockchain-trading/interfaces/exchange"
 	"blockchain-trading/interfaces/presenter"
+	"database/sql"
 	"fmt"
 	"net/url"
+	"strconv"
+	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	_ "github.com/lib/pq"
 )
 
@@ -49,9 +51,11 @@ func main() {
 		return
 	}
 
+	startTime := time.Date(2021, time.January, 1, 0, 0, 0, 0, time.UTC)
 	query := map[string]string{
-		"symbol":   "BTCUSDT",
-		"interval": exchange.Interval1m,
+		"symbol":    "BTCUSDT",
+		"interval":  exchange.Interval1m,
+		"startTime": strconv.Itoa(int(startTime.Unix() * 1000)),
 	}
 
 	var ohlcs []entity.OHLC
@@ -65,23 +69,24 @@ func main() {
 		return
 	}
 
-	spew.Dump(ohlcs)
+	driverName, dataSourceName := config.SetDBConfig()
+	conn, err := sql.Open(driverName, dataSourceName)
+	if err != nil {
+		panic(err)
+	}
 
-	// driverName, dataSourceName := config.SetDBConfig()
-	// conn, err := sql.Open(driverName, dataSourceName)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	container, err = di.NewOHLC(conn)
+	if err != nil {
+		panic(err)
+	}
 
-	// container, err := di.NewCurrency(conn)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// if err := container.Invoke(func(dp *presenter.CurrencyPresenter) {
-
-	// }); err != nil {
-	// 	panic(err)
-	// }
+	if err := container.Invoke(func(op *presenter.OHLCPresenter) {
+		err = op.RegisterOHLCs(ohlcs)
+		if err != nil {
+			panic(err)
+		}
+	}); err != nil {
+		panic(err)
+	}
 
 }
