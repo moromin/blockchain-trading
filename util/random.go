@@ -14,13 +14,18 @@ func init() {
 	rand.Seed(time.Now().UnixMicro())
 }
 
-func RandomInt(min, max int64) int64 {
-	return min + rand.Int63n(max-min+1)
+func RandomInt() int64 {
+	return rand.Int63n(1000)
 }
 
-func RandomString(n int) string {
+func RandomFloat() float64 {
+	return rand.Float64() * 100000
+}
+
+func RandomString() string {
 	var sb strings.Builder
 	k := len(alphabet)
+	n := 6
 
 	for i := 0; i < n; i++ {
 		c := alphabet[rand.Intn(k)]
@@ -30,16 +35,11 @@ func RandomString(n int) string {
 	return sb.String()
 }
 
-func RandomCoin() string {
-	return strings.ToUpper(RandomString(4))
-}
+func RandomDate() time.Time {
+	min := time.Date(1970, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	max := time.Date(2070, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	delta := max - min
 
-func RandomName() string {
-	return RandomString(10)
-}
-
-func RandomCurrency() string {
-	currencies := []string{"EUR", "USD", "CAD"}
-	n := len(currencies)
-	return currencies[rand.Intn(n)]
+	sec := rand.Int63n(delta) + min
+	return time.Unix(sec, 0)
 }
