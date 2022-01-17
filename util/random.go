@@ -15,7 +15,7 @@ func init() {
 }
 
 func RandomInt() int64 {
-	return rand.Int63n(1000)
+	return rand.Int63()
 }
 
 func RandomFloat() float64 {
