@@ -17,20 +17,6 @@ import (
 )
 
 func main() {
-	// Confirm apiclient
-	// baseURL, err := url.Parse(exchange.BitFlyerURL)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// target := infrastructure.Target{
-	// 	BaseURL: baseURL,
-	// 	Header: map[string]string{
-	// 		"ACCESS-KEY":   config.Env.BfKey,
-	// 		"Content-Type": "application/json",
-	// 	},
-	// }
-
 	// Setup binance API client
 	baseURL, err := url.Parse(exchange.BinanceURL)
 	if err != nil {
