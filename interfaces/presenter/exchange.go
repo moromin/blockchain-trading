@@ -30,6 +30,15 @@ func (dp *ExchangePresenter) ShowOHLC(query map[string]string) {
 	spew.Dump(ohlcs)
 }
 
+func (dp *ExchangePresenter) GetOHLC(query map[string]string) ([]entity.OHLC, error) {
+	ohlcs, err := dp.Interactor.ConfirmOHLC(query)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	return ohlcs, nil
+}
+
 func (dp *ExchangePresenter) GetAllCurrency() ([]entity.Currency, error) {
 	currencies, err := dp.Interactor.ConfirmAllCurrencyInfomation()
 	if err != nil {

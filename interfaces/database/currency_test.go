@@ -24,8 +24,8 @@ func TestListCurrencies(t *testing.T) {
 	want := []entity.Currency{
 		{
 			ID:   1,
-			Coin: util.RandomCoin(),
-			Name: util.RandomName(),
+			Coin: util.RandomString(),
+			Name: util.RandomString(),
 		},
 	}
 
@@ -105,8 +105,8 @@ func TestRegisterCurrency(t *testing.T) {
 	}
 
 	testArgs := usecase.ResisterCurrencyParams{
-		Coin: util.RandomCoin(),
-		Name: util.RandomName(),
+		Coin: util.RandomString(),
+		Name: util.RandomString(),
 	}
 
 	tests := []struct {

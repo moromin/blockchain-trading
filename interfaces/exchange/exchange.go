@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
@@ -143,13 +144,15 @@ func (er *ExchangeRepository) GetOHLC(query map[string]string) ([]entity.OHLC, e
 			panic(ok)
 		}
 
-		ohlcs[i].OpenTime = int64(data[0].(float64))
+		ohlcs[i].Symbol = query["symbol"]
+		ohlcs[i].Interval = query["interval"]
+		ohlcs[i].OpenTime = time.Unix(int64(data[0].(float64))/1000, 0)
 		ohlcs[i].Open, _ = strconv.ParseFloat(data[1].(string), 64)
 		ohlcs[i].High, _ = strconv.ParseFloat(data[2].(string), 64)
 		ohlcs[i].Low, _ = strconv.ParseFloat(data[3].(string), 64)
 		ohlcs[i].Close, _ = strconv.ParseFloat(data[4].(string), 64)
 		ohlcs[i].Volume, _ = strconv.ParseFloat(data[5].(string), 64)
-		ohlcs[i].CloseTime = int64(data[6].(float64))
+		ohlcs[i].CloseTime = time.Unix(int64(data[6].(float64))/1000, 0)
 		ohlcs[i].QuoteAssetVolume, _ = strconv.ParseFloat(data[7].(string), 64)
 		ohlcs[i].NumberOfTrades = int64(data[8].(float64))
 		ohlcs[i].TakerBuyBaseAssetVolume, _ = strconv.ParseFloat(data[9].(string), 64)

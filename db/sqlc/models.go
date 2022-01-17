@@ -19,6 +19,8 @@ type Interval struct {
 
 type Ohlc struct {
 	ID                       int64     `json:"id"`
+	Symbol                   string    `json:"symbol"`
+	Interval                 string    `json:"interval"`
 	Opentime                 time.Time `json:"opentime"`
 	Open                     string    `json:"open"`
 	High                     string    `json:"high"`
@@ -30,8 +32,6 @@ type Ohlc struct {
 	NumerOfTrades            int64     `json:"numer_of_trades"`
 	TakerBuyBaseAssetVolume  string    `json:"taker_buy_base_asset_volume"`
 	TakerBuyQuoteAssetVolume string    `json:"taker_buy_quote_asset_volume"`
-	SymbolID                 int64     `json:"symbol_id"`
-	IntervalID               int64     `json:"interval_id"`
 }
 
 type Symbol struct {

@@ -8,7 +8,9 @@ import (
 
 type Querier interface {
 	GetCurrency(ctx context.Context, name string) (Currency, error)
+	GetOHLC(ctx context.Context, arg GetOHLCParams) ([]Ohlc, error)
 	ListCurrencies(ctx context.Context, arg ListCurrenciesParams) ([]Currency, error)
+	RegisterOHLC(ctx context.Context, arg RegisterOHLCParams) (Ohlc, error)
 	ResisterCurrency(ctx context.Context, arg ResisterCurrencyParams) (Currency, error)
 }
 
