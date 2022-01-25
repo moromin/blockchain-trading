@@ -1,0 +1,14 @@
+FROM node:16.13.1
+
+CMD ["/bin/sh"]
+
+ENV PROJECT /go-trading
+
+WORKDIR ${PROJECT}
+
+RUN apt-get update && \
+	npm install -g create-react-app
+
+ADD ${PROJECT}/package.json ${PROJECT}
+
+RUN npm install

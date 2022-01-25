@@ -1,0 +1,13 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: "./Dockerfile-react"
+    volumes:
+      - ./go-trading:/go-trading
+    command: >
+      sh -c "npm run start"
+    ports:
+      - "3000:3000"
+    container_name: "trading-frontend"
