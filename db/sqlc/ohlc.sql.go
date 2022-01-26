@@ -8,28 +8,34 @@ import (
 	"time"
 )
 
-const getOHLC = `-- name: GetOHLC :many
-SELECT id, symbol, interval, opentime, open, high, low, close, volume, closetime, quote_asset_volume, numer_of_trades, taker_buy_base_asset_volume, taker_buy_quote_asset_volume FROM ohlcs
-WHERE symbol = $1 AND interval = $2
+const findBySymbol = `-- name: FindBySymbol :many
+SELECT symbol, interval, opentime, open, high, low, close, volume
+FROM ohlcs
+WHERE symbol = $1
 ORDER BY id
 `
 
-type GetOHLCParams struct {
-	Symbol   string `json:"symbol"`
-	Interval string `json:"interval"`
+type FindBySymbolRow struct {
+	Symbol   string    `json:"symbol"`
+	Interval string    `json:"interval"`
+	Opentime time.Time `json:"opentime"`
+	Open     string    `json:"open"`
+	High     string    `json:"high"`
+	Low      string    `json:"low"`
+	Close    string    `json:"close"`
+	Volume   string    `json:"volume"`
 }
 
-func (q *Queries) GetOHLC(ctx context.Context, arg GetOHLCParams) ([]Ohlc, error) {
-	rows, err := q.db.QueryContext(ctx, getOHLC, arg.Symbol, arg.Interval)
+func (q *Queries) FindBySymbol(ctx context.Context, symbol string) ([]FindBySymbolRow, error) {
+	rows, err := q.db.QueryContext(ctx, findBySymbol, symbol)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Ohlc{}
+	items := []FindBySymbolRow{}
 	for rows.Next() {
-		var i Ohlc
+		var i FindBySymbolRow
 		if err := rows.Scan(
-			&i.ID,
 			&i.Symbol,
 			&i.Interval,
 			&i.Opentime,
@@ -38,11 +44,6 @@ func (q *Queries) GetOHLC(ctx context.Context, arg GetOHLCParams) ([]Ohlc, error
 			&i.Low,
 			&i.Close,
 			&i.Volume,
-			&i.Closetime,
-			&i.QuoteAssetVolume,
-			&i.NumerOfTrades,
-			&i.TakerBuyBaseAssetVolume,
-			&i.TakerBuyQuoteAssetVolume,
 		); err != nil {
 			return nil, err
 		}
@@ -69,12 +70,12 @@ INSERT INTO ohlcs (
 	volume,
 	closetime,
 	quote_asset_volume,
-	numer_of_trades,
+	number_of_trades,
 	taker_buy_base_asset_volume,
-	taker_buy_quote_asset_volume 
+	taker_buy_quote_asset_volume
 ) VALUES (
-	$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 
-) RETURNING id, symbol, interval, opentime, open, high, low, close, volume, closetime, quote_asset_volume, numer_of_trades, taker_buy_base_asset_volume, taker_buy_quote_asset_volume
+	$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
+) RETURNING id, symbol, interval, opentime, open, high, low, close, volume, closetime, quote_asset_volume, number_of_trades, taker_buy_base_asset_volume, taker_buy_quote_asset_volume
 `
 
 type RegisterOHLCParams struct {
@@ -88,7 +89,7 @@ type RegisterOHLCParams struct {
 	Volume                   string    `json:"volume"`
 	Closetime                time.Time `json:"closetime"`
 	QuoteAssetVolume         string    `json:"quote_asset_volume"`
-	NumerOfTrades            int64     `json:"numer_of_trades"`
+	NumberOfTrades           int64     `json:"number_of_trades"`
 	TakerBuyBaseAssetVolume  string    `json:"taker_buy_base_asset_volume"`
 	TakerBuyQuoteAssetVolume string    `json:"taker_buy_quote_asset_volume"`
 }
@@ -105,7 +106,7 @@ func (q *Queries) RegisterOHLC(ctx context.Context, arg RegisterOHLCParams) (Ohl
 		arg.Volume,
 		arg.Closetime,
 		arg.QuoteAssetVolume,
-		arg.NumerOfTrades,
+		arg.NumberOfTrades,
 		arg.TakerBuyBaseAssetVolume,
 		arg.TakerBuyQuoteAssetVolume,
 	)
@@ -122,7 +123,7 @@ func (q *Queries) RegisterOHLC(ctx context.Context, arg RegisterOHLCParams) (Ohl
 		&i.Volume,
 		&i.Closetime,
 		&i.QuoteAssetVolume,
-		&i.NumerOfTrades,
+		&i.NumberOfTrades,
 		&i.TakerBuyBaseAssetVolume,
 		&i.TakerBuyQuoteAssetVolume,
 	)

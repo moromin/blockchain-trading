@@ -29,7 +29,7 @@ type Ohlc struct {
 	Volume                   string    `json:"volume"`
 	Closetime                time.Time `json:"closetime"`
 	QuoteAssetVolume         string    `json:"quote_asset_volume"`
-	NumerOfTrades            int64     `json:"numer_of_trades"`
+	NumberOfTrades           int64     `json:"number_of_trades"`
 	TakerBuyBaseAssetVolume  string    `json:"taker_buy_base_asset_volume"`
 	TakerBuyQuoteAssetVolume string    `json:"taker_buy_quote_asset_volume"`
 }
