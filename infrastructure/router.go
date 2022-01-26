@@ -4,6 +4,7 @@ import (
 	"blockchain-trading/interfaces/controllers"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"go.uber.org/dig"
 )
 
@@ -30,5 +31,8 @@ func getOHLCsBySymbol(c echo.Context) error {
 
 func OHLCRouting(e *echo.Echo, container *dig.Container) {
 	OHLCContainer = container
+
+	e.Use(middleware.CORS())
+
 	e.GET("ohlc/:symbol", getOHLCsBySymbol)
 }
