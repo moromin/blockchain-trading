@@ -3,6 +3,7 @@ package di
 import (
 	"blockchain-trading/infrastructure"
 	"blockchain-trading/interfaces/api"
+	"blockchain-trading/interfaces/controllers"
 	"blockchain-trading/interfaces/database"
 	"blockchain-trading/interfaces/exchange"
 	"blockchain-trading/interfaces/presenter"
@@ -87,6 +88,12 @@ func NewCurrency(db *sql.DB) (*dig.Container, error) {
 
 func NewOHLC(db *sql.DB) (*dig.Container, error) {
 	c := dig.New()
+
+	if err := c.Provide(func(oi *usecase.OHLCInteractor) *controllers.OHLCController {
+		return &controllers.OHLCController{Interactor: oi}
+	}); err != nil {
+		return nil, errors.WithStack(err)
+	}
 
 	if err := c.Provide(func(oi *usecase.OHLCInteractor) *presenter.OHLCPresenter {
 		return &presenter.OHLCPresenter{Interactor: oi}

@@ -24,4 +24,5 @@ type RegisterOHLCParams struct {
 
 type OHLCRepository interface {
 	RegisterOHLC(ctx context.Context, arg RegisterOHLCParams) (entity.OHLC, error)
+	FindBySymbol(ctx context.Context, symbol string) ([]entity.OHLC, error)
 }
