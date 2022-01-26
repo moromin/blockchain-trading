@@ -3,18 +3,18 @@ package entity
 import "time"
 
 type OHLC struct {
-	ID                       int64
-	Symbol                   string
-	Interval                 string
-	OpenTime                 time.Time
-	Open                     float64
-	High                     float64
-	Low                      float64
-	Close                    float64
-	Volume                   float64
-	CloseTime                time.Time
-	QuoteAssetVolume         float64
-	NumberOfTrades           int64
-	TakerBuyBaseAssetVolume  float64
-	TakerBuyQuoteAssetVolume float64
+	ID                       int64     `json:"-"`
+	Symbol                   string    `json:"symbol"`
+	Interval                 string    `json:"interval"`
+	OpenTime                 time.Time `json:"time"`
+	Open                     float64   `json:"open"`
+	High                     float64   `json:"high"`
+	Low                      float64   `json:"low"`
+	Close                    float64   `json:"close"`
+	Volume                   float64   `json:"volume"`
+	CloseTime                time.Time `json:"-"`
+	QuoteAssetVolume         float64   `json:"-"`
+	NumberOfTrades           int64     `json:"-"`
+	TakerBuyBaseAssetVolume  float64   `json:"-"`
+	TakerBuyQuoteAssetVolume float64   `json:"-"`
 }
